@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
-  onToggleMode?: () => void; // optional signup toggle
+  onToggleMode?: () => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
@@ -61,7 +61,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleMode }) => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-md mx-auto px-4">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
         <p className="text-gray-600">Sign in to your account</p>
