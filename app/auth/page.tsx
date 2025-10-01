@@ -56,7 +56,7 @@ export default function AuthPage() {
       </div>
 
       {/* Right Side - Form */}
-      <div className="flex w-full lg:w-1/2 justify-center items-center bg-gray-50 p-8">
+      <div className="flex w-full lg:w-1/2 justify-center items-center bg-gray-50 p-8 sm:p-6 px-4">
         {isLogin ? (
           <LoginForm onToggleMode={toggleMode} />
         ) : (
