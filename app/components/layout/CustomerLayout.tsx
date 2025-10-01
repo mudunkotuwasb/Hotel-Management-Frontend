@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Header from "../common/Header";
 import Navbar from "../common/Navbar";
 
@@ -12,7 +13,7 @@ export default function CustomerLayout({
     <div className="flex flex-col min-h-screen">
       <Header dashboardType="customer" />
       <Navbar />
-      <main className="flex-1 p-6 bg-gray-50">{children}</main>
+      <main className="flex-1 p-4 sm:p-6 bg-gray-50">{children}</main>
     </div>
   );
 }

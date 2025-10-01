@@ -1,4 +1,3 @@
-// components/Navbar.tsx
 "use client";
 
 import { useState } from "react";
@@ -57,18 +56,18 @@ export default function Navbar() {
 
   const handleClick = (tabId: string, href: string) => {
     setActiveTab(tabId);
-    router.push(href); // navigate to the route
+    router.push(href);
   };
 
   return (
-    <div className="bg-white border-b border-gray-200">
+    <div className="bg-white border-b border-gray-200 overflow-x-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="flex space-x-8">
+        <nav className="flex space-x-4 whitespace-nowrap">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => handleClick(tab.id, tab.href)}
-              className={`py-4 px-1 border-b-2 font-semibold text-sm flex items-center space-x-2 transition-colors ${
+              className={`py-4 px-2 border-b-2 font-semibold text-sm flex items-center space-x-2 transition-colors ${
                 activeTab === tab.id
                   ? "border-blue-500 text-blue-600"
                   : "border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300"

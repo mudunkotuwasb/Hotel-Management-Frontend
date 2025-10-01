@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Header from "../common/Header";
 import Sidebar from "../common/Sidebar";
 
@@ -10,15 +11,24 @@ export default function AdminReceptionistLayout({
   children: React.ReactNode;
   role: "admin" | "receptionist";
 }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <Sidebar role={role} />
+      <Sidebar
+        role={role}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
 
       {/* Main content */}
       <div className="flex flex-col flex-1">
-        <Header />
-        <main className="flex-1 p-6 bg-gray-50">{children}</main>
+        <Header
+          dashboardType={role}
+          onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
+        />
+        <main className="flex-1 p-4 sm:p-6 bg-gray-50">{children}</main>
       </div>
     </div>
   );
