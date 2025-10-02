@@ -19,15 +19,20 @@ export default function Header({
 
   const titleMap: Record<string, string> = {
     "/dashboard/admin": "Dashboard",
-    "/pages/rooms": "Room Management",
-    "/pages/bookings": "Bookings & Reservations",
-    "/pages/dining": "Dining & Menu",
-    "/pages/trip-packages": "Hotel Management",
+    "/dashboard/admin/rooms": "Room Management",
+    "/dashboard/admin/bookings": "Bookings & Reservations",
+    "/dashboard/admin/dining": "Dining & Menu",
+    "/dashboard/admin/trip-packages": "Hotel Management",
     "/dashboard/admin/inventory": "Inventory Management",
-    "/pages/billing": "Billing",
+    "/dashboard/admin/billing": "Billing",
     "/dashboard/admin/reports": "Reports & Analytics",
     "/dashboard/admin/settings": "Settings",
     "/dashboard/receptionist": "Dashboard",
+    "/dashboard/receptionist/rooms": "Room Management",
+    "/dashboard/receptionist/bookings": "Bookings & Reservations",
+    "/dashboard/receptionist/dining": "Dining & Menu",
+    "/dashboard/receptionist/trip-packages": "Hotel Management",
+    "/dashboard/receptionist/billing": "Billing",
   };
 
   const title = titleMap[pathname] || "Hotel Management";

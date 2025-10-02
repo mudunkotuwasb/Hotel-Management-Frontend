@@ -1,10 +1,10 @@
 "use client";
 
-import AdminReceptionistLayout from "../../components/layout/AdminReceptionistLayout";
-import DashboardCard from "../../components/common/DashboardCard";
+import AdminReceptionistLayout from "../../../components/layout/AdminReceptionistLayout";
+import DashboardCard from "../../../components/common/DashboardCard";
 import { Users, DollarSign, Calendar } from "lucide-react";
 
-export default function Bookings() {
+export default function TripPackages() {
   return (
     <AdminReceptionistLayout role="admin">
       <h2 className="text-2xl font-bold mb-6">Admin Dashboard</h2>

@@ -1,13 +1,13 @@
 "use client";
 
-import AdminReceptionistLayout from "../../components/layout/AdminReceptionistLayout";
-import DashboardCard from "../../components/common/DashboardCard";
+import AdminReceptionistLayout from "../../../components/layout/AdminReceptionistLayout";
+import DashboardCard from "../../../components/common/DashboardCard";
 import { Users, DollarSign, Calendar } from "lucide-react";
 
-export default function Inventory() {
+export default function Billing() {
   return (
-    <AdminReceptionistLayout role="admin">
-      <h2 className="text-2xl font-bold mb-6">Admin Dashboard</h2>
+    <AdminReceptionistLayout role="receptionist">
+      <h2 className="text-2xl font-bold mb-6">Receptionist Dashboard</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <DashboardCard
