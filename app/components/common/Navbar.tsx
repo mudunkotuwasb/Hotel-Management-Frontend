@@ -27,13 +27,13 @@ const tabs = [
   {
     id: "explore",
     name: "Explore Rooms",
-    href: "/dashboard/customer/rooms",
+    href: "/dashboard/customer/ExploreRooms",
     icon: MapPin,
   },
   {
     id: "menu",
     name: "Restaurant Menu",
-    href: "/dashboard/customer/menu",
+    href: "/dashboard/customer/RestaurantMenu",
     icon: Utensils,
   },
   {
