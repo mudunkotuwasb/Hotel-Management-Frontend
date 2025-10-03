@@ -69,7 +69,6 @@ export default function Rooms() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [rooms, setRooms] = useState<Room[]>(initialRooms);
 
-  // Check-in form state
   const [showCheckInForm, setShowCheckInForm] = useState(false);
   const [checkInRoom, setCheckInRoom] = useState<Room | null>(null);
   const [checkInGuest, setCheckInGuest] = useState({
@@ -81,13 +80,11 @@ export default function Rooms() {
     {}
   );
 
-  // Filter state
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [floorFilter, setFloorFilter] = useState("all");
 
-  // New/Edit Room state
   const [newRoom, setNewRoom] = useState<Room>({
     id: "",
     number: "",
@@ -202,7 +199,6 @@ export default function Rooms() {
     resetCheckInForm();
   };
 
-  // Hardcoded status counts
   const statusCounts = {
     total: rooms.length,
     available: rooms.filter((r) => r.status === "available").length,
@@ -248,13 +244,13 @@ export default function Rooms() {
               Manage {statusCounts.total} rooms across the hotel
             </p>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center bg-gray-100 rounded-xl p-1">
               <button
                 onClick={() => setViewMode("grid")}
                 className={`p-2 rounded-lg transition-colors ${
                   viewMode === "grid"
-                    ? "bg-white shadow-soft text-blue-600"
+                    ? "bg-white shadow text-blue-600"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
@@ -264,7 +260,7 @@ export default function Rooms() {
                 onClick={() => setViewMode("list")}
                 className={`p-2 rounded-lg transition-colors ${
                   viewMode === "list"
-                    ? "bg-white shadow-soft text-blue-600"
+                    ? "bg-white shadow text-blue-600"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
@@ -283,7 +279,7 @@ export default function Rooms() {
         </div>
 
         {/* Status Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
           <div className="border rounded-lg p-4 text-center shadow-sm hover:shadow-md transition bg-white border-gray-100">
             <div className="text-3xl font-bold text-gray-900 mb-1">
               {statusCounts.total}
@@ -366,11 +362,11 @@ export default function Rooms() {
           />
         )}
 
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 space-y-2 sm:space-y-0">
           <p className="text-sm text-navy-600 font-medium">
             Showing {filteredRooms.length} of {rooms.length} rooms
           </p>
-          <div className="flex items-center space-x-2 text-sm text-navy-500">
+          <div className="flex flex-wrap items-center space-x-2 text-sm text-navy-500">
             <Filter className="h-4 w-4" />
             <span>
               Filtered by:{" "}
@@ -390,7 +386,7 @@ export default function Rooms() {
           rooms={filteredRooms}
           viewMode={viewMode}
           onEdit={handleEditRoom}
-          onView={(room) => handleEditRoom(room)} // ✅ simple example
+          onView={(room) => handleEditRoom(room)}
           onStatusChange={handleStatusChange}
           onCheckIn={handleCheckIn}
           onCheckOut={handleCheckOut}
