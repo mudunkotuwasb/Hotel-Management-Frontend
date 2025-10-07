@@ -45,7 +45,7 @@ const tabs = [
   {
     id: "profile",
     name: "Profile",
-    href: "/dashboard/customer/profile",
+    href: "/dashboard/customer/Profile",
     icon: Users,
   },
 ];
