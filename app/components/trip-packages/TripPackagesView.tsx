@@ -119,7 +119,7 @@ export default function TripPackagesView() {
       console.error('Error updating package:', error);
     }
     */
-    
+
     // Temporary console log until API is implemented
     console.log("Package to be updated:", updatedPackage);
     setIsEditModalOpen(false);
@@ -127,7 +127,9 @@ export default function TripPackagesView() {
   };
 
   if (loading) {
-    return <div className="text-center text-black py-8">Loading packages...</div>;
+    return (
+      <div className="text-center text-black py-8">Loading packages...</div>
+    );
   }
 
   return (
@@ -159,8 +161,12 @@ export default function TripPackagesView() {
                   </svg>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base md:text-lg font-semibold truncate">{pkg.name}</h3>
-                  <p className="text-gray-500 text-xs md:text-sm truncate">{pkg.location}</p>
+                  <h3 className="text-base md:text-lg font-semibold truncate">
+                    {pkg.name}
+                  </h3>
+                  <p className="text-gray-500 text-xs md:text-sm truncate">
+                    {pkg.location}
+                  </p>
                 </div>
               </div>
               <span className="bg-green-100 text-green-700 text-xs font-medium px-2 md:px-3 py-1 rounded-full flex-shrink-0 ml-2">
@@ -181,7 +187,9 @@ export default function TripPackagesView() {
               </div>
               <div className="flex items-center space-x-2">
                 <Users className="w-3 h-3 md:w-4 md:h-4 text-gray-500 flex-shrink-0" />
-                <span className="truncate">Max {pkg.maxParticipants} participants</span>
+                <span className="truncate">
+                  Max {pkg.maxParticipants} participants
+                </span>
               </div>
               <div className="flex items-center space-x-2">
                 <Bus className="w-3 h-3 md:w-4 md:h-4 text-gray-500 flex-shrink-0" />
@@ -196,7 +204,7 @@ export default function TripPackagesView() {
 
             {/* Buttons */}
             <div className="flex items-center space-x-2 md:space-x-3">
-              <button 
+              <button
                 className="flex items-center space-x-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors flex-1 justify-center"
                 onClick={() => handleEditClick(pkg)}
               >
@@ -204,16 +212,12 @@ export default function TripPackagesView() {
                 <span className="hidden xs:inline">Edit</span>
               </button>
 
-              <button 
-                className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors flex-1 justify-center"
-              >
+              <button className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors flex-1 justify-center">
                 <span className="hidden sm:inline">Deactivate</span>
                 <span className="sm:hidden">Deact</span>
               </button>
 
-              <button 
-                className="bg-red-600 hover:bg-red-700 text-white p-1.5 md:p-2 rounded-lg transition-colors flex-shrink-0"
-              >
+              <button className="bg-red-600 hover:bg-red-700 text-white p-1.5 md:p-2 rounded-lg transition-colors flex-shrink-0">
                 <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
               </button>
             </div>
@@ -222,7 +226,7 @@ export default function TripPackagesView() {
       </div>
 
       {/* Update Package Modal */}
-      <AddPackageModal 
+      <AddPackageModal
         isOpen={isEditModalOpen}
         onClose={() => {
           setIsEditModalOpen(false);
