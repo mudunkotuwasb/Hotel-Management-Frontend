@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import AdminReceptionistLayout from "../../../components/layout/AdminReceptionistLayout";
-import TripPackagesView from "./TripPackagesView";
-import BookingsView from "./BookingsView";
-import AddPackageModal from "./AddPackageModal";
+import TripPackagesView from "../../../components/trip-packages/TripPackagesView";
+import BookingsView from "../../../components/trip-packages/BookingsView";
+import AddPackageModal from "../../../components/trip-packages/AddPackageModal";
 import { Package, Clock } from "lucide-react";
 
 export default function TripPackages() {
-  const [activeTab, setActiveTab] = useState<"packages" | "bookings">("packages");
+  const [activeTab, setActiveTab] = useState<"packages" | "bookings">(
+    "packages"
+  );
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   return (
@@ -30,20 +32,22 @@ export default function TripPackages() {
         <div className="flex space-x-6 border-b mb-6">
           <button
             onClick={() => setActiveTab("packages")}
-            className={`flex items-center space-x-2 pb-3 px-1 font-medium ${activeTab === "packages"
+            className={`flex items-center space-x-2 pb-3 px-1 font-medium ${
+              activeTab === "packages"
                 ? "border-b-2 border-blue-600 text-blue-600"
                 : "text-gray-700 hover:text-gray-900"
-              }`}
+            }`}
           >
             <Package className="w-5 h-5" />
             <span>Packages (3)</span>
           </button>
           <button
             onClick={() => setActiveTab("bookings")}
-            className={`flex items-center space-x-2 pb-3 px-1 font-medium ${activeTab === "bookings"
+            className={`flex items-center space-x-2 pb-3 px-1 font-medium ${
+              activeTab === "bookings"
                 ? "border-b-2 border-blue-600 text-blue-600"
                 : "text-gray-700 hover:text-gray-900"
-              }`}
+            }`}
           >
             <Clock className="w-5 h-5" />
             <span>Bookings (2)</span>
@@ -51,13 +55,8 @@ export default function TripPackages() {
         </div>
 
         {/* Content based on active tab */}
-        {activeTab === "packages" ? (
-          <TripPackagesView />
-        ) : (
-          <BookingsView />
-        )}
+        {activeTab === "packages" ? <TripPackagesView /> : <BookingsView />}
       </div>
-
 
       {/* Add Package Modal */}
       <AddPackageModal
