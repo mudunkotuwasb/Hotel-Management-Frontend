@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import AdminReceptionistLayout from "../../../components/layout/AdminReceptionistLayout";
-import NewBookingModal from "./NewBookingModal";
+import NewBookingModal from "../../../components/bookings/NewBookingModal";
 import { Calendar, CheckCircle, UserCheck, Users, LogOut } from "lucide-react";
 
 export default function Bookings() {
@@ -21,8 +21,18 @@ export default function Bookings() {
 
   // Month names
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const monthName = monthNames[displayMonth];
@@ -55,12 +65,13 @@ export default function Bookings() {
       days.push(
         <div
           key={day}
-          className={`text-center text-sm p-2 border border-gray-200 rounded cursor-pointer transition-colors ${isSelected
+          className={`text-center text-sm p-2 border border-gray-200 rounded cursor-pointer transition-colors ${
+            isSelected
               ? "bg-blue-600 text-white border-blue-600 font-semibold"
               : today
-                ? "bg-green-500 text-white border-green-500 font-semibold"
-                : "text-gray-900 hover:bg-gray-50"
-            }`}
+              ? "bg-green-500 text-white border-green-500 font-semibold"
+              : "text-gray-900 hover:bg-gray-50"
+          }`}
           onClick={() => handleDateClick(day)}
         >
           {day}
@@ -77,8 +88,12 @@ export default function Bookings() {
         {/* Header with New Booking Button */}
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Bookings & Reservations</h1>
-            <p className="text-gray-600">Manage guest reservations and check-ins</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Bookings & Reservations
+            </h1>
+            <p className="text-gray-600">
+              Manage guest reservations and check-ins
+            </p>
           </div>
           <button
             onClick={() => setIsNewBookingOpen(true)}
@@ -142,14 +157,16 @@ export default function Bookings() {
             {/* Calendar Header */}
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900">{monthName} {displayYear}</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {monthName} {displayYear}
+                </h3>
               </div>
             </div>
 
             {/* Calendar Grid */}
             <div className="grid grid-cols-7 gap-1">
               {/* Days Header */}
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                 <div
                   key={day}
                   className="text-center text-sm font-medium text-gray-500 py-2"
