@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import AdminReceptionistLayout from "../../../components/layout/AdminReceptionistLayout";
-import OrdersView from "./components/OrdersView";
-import ManualOrderView from "./components/ManualOrderView";
-import MenuManagement from "./components/MenuManagement";
-import NewMenuItemPopup from "./components/NewMenuItemPopup";
+import OrdersView from "../../../components/dining/OrdersView";
+import ManualOrderView from "../../../components/dining/ManualOrderView";
+import MenuManagement from "../../../components/dining/MenuManagement";
+import NewMenuItemPopup from "../../../components/dining/NewMenuItemPopup";
 import { ClipboardList, Plus, Utensils } from "lucide-react";
 
 type ActiveView = "orders" | "manual-order" | "menu";
@@ -19,7 +19,9 @@ export default function Dining() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-black">Dining & Menu</h2>
-          <p className="text-gray-600">Manage menu items and track food orders</p>
+          <p className="text-gray-600">
+            Manage menu items and track food orders
+          </p>
         </div>
         <button
           onClick={() => setShowNewMenuPopup(true)}
@@ -32,21 +34,33 @@ export default function Dining() {
       {/* Navigation */}
       <div className="flex space-x-4 mb-6 border-b">
         <button
-          className={`flex items-center space-x-2 pb-2 px-1 ${activeView === "orders" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600"}`}
+          className={`flex items-center space-x-2 pb-2 px-1 ${
+            activeView === "orders"
+              ? "border-b-2 border-blue-600 text-blue-600"
+              : "text-gray-600"
+          }`}
           onClick={() => setActiveView("orders")}
         >
           <ClipboardList className="w-4 h-4" />
           <span>Orders (2)</span>
         </button>
         <button
-          className={`flex items-center space-x-2 pb-2 px-1 ${activeView === "manual-order" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600"}`}
+          className={`flex items-center space-x-2 pb-2 px-1 ${
+            activeView === "manual-order"
+              ? "border-b-2 border-blue-600 text-blue-600"
+              : "text-gray-600"
+          }`}
           onClick={() => setActiveView("manual-order")}
         >
           <Plus className="w-4 h-4" />
           <span>Manual Order</span>
         </button>
         <button
-          className={`flex items-center space-x-2 pb-2 px-1 ${activeView === "menu" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-600"}`}
+          className={`flex items-center space-x-2 pb-2 px-1 ${
+            activeView === "menu"
+              ? "border-b-2 border-blue-600 text-blue-600"
+              : "text-gray-600"
+          }`}
           onClick={() => setActiveView("menu")}
         >
           <Utensils className="w-4 h-4" />
