@@ -18,7 +18,7 @@ interface CheckInFormProps {
   onCheckIn: () => void;
 }
 
-const CheckInForm: React.FC<CheckInFormProps> = ({
+export default function CheckInForm({
   room,
   guest,
   setGuest,
@@ -26,7 +26,7 @@ const CheckInForm: React.FC<CheckInFormProps> = ({
   setErrors,
   onClose,
   onCheckIn,
-}) => {
+}: CheckInFormProps): React.ReactElement {
   return (
     <div className="card bg-white rounded-lg shadow-lg p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
@@ -102,6 +102,4 @@ const CheckInForm: React.FC<CheckInFormProps> = ({
       </div>
     </div>
   );
-};
-
-export default CheckInForm;
+}

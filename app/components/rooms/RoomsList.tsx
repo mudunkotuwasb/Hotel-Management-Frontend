@@ -32,7 +32,7 @@ interface RoomsListProps {
   onDelete: (room: Room) => void;
 }
 
-const RoomsList: React.FC<RoomsListProps> = ({
+export default function RoomsList({
   rooms,
   viewMode,
   onEdit,
@@ -41,7 +41,7 @@ const RoomsList: React.FC<RoomsListProps> = ({
   onCheckIn,
   onCheckOut,
   onDelete,
-}) => {
+}: RoomsListProps): React.ReactElement {
   if (rooms.length === 0)
     return (
       <div className="text-center py-12 text-gray-600">
@@ -162,6 +162,4 @@ const RoomsList: React.FC<RoomsListProps> = ({
       </table>
     </div>
   );
-};
-
-export default RoomsList;
+}
