@@ -31,13 +31,13 @@ interface InventoryCardProps {
   onDelete?: (item: InventoryItem) => void;
 }
 
-const InventoryCard: React.FC<InventoryCardProps> = ({
+export default function InventoryCard({
   item,
   onEdit,
   onRestock,
   onUpdateStock,
   onDelete,
-}) => {
+}: InventoryCardProps): React.ReactElement {
   // Category icon
   const getCategoryIcon = (category: InventoryItem["category"]) => {
     switch (category) {
@@ -246,6 +246,4 @@ const InventoryCard: React.FC<InventoryCardProps> = ({
       </div>
     </div>
   );
-};
-
-export default InventoryCard;
+}

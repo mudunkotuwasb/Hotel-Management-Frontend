@@ -75,7 +75,7 @@ interface RoomCardProps {
   booking?: Booking | null;
 }
 
-const RoomCard: React.FC<RoomCardProps> = ({
+function RoomCard({
   room,
   onEdit,
   onStatusChange,
@@ -85,7 +85,7 @@ const RoomCard: React.FC<RoomCardProps> = ({
   onCheckOut,
   guest,
   booking,
-}) => {
+}: RoomCardProps): React.ReactElement {
   const getStatusConfig = (status: Room["status"]) => {
     switch (status) {
       case "available":
@@ -346,6 +346,6 @@ const RoomCard: React.FC<RoomCardProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default RoomCard;
