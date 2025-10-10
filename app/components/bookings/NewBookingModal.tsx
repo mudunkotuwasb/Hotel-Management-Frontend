@@ -201,7 +201,7 @@ export default function NewBookingModal({
         }
     };
 
-    // API INTEGRATION SECTION - UPDATE BOOKING
+    // Update API endpoint add here
     const handleUpdateBooking = async () => {
         if (!editingBooking) return;
 
@@ -232,8 +232,8 @@ export default function NewBookingModal({
                     bedPreference: formData.bedPreference,
                     mealPlan: formData.mealPlan,
                     specialRequest: formData.specialRequest,
-                    status: editingBooking.status, // Keep existing status
-                    totalAmount: editingBooking.totalAmount // Keep existing amount or calculate new one
+                    status: editingBooking.status,
+                    totalAmount: editingBooking.totalAmount
                 }
             };
 

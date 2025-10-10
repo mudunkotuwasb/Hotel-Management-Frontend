@@ -75,7 +75,10 @@ export default function Dining() {
 
       {/* New Menu Item Popup */}
       {showNewMenuPopup && (
-        <NewMenuItemPopup onClose={() => setShowNewMenuPopup(false)} />
+        <NewMenuItemPopup 
+          isOpen={showNewMenuPopup}
+          onClose={() => setShowNewMenuPopup(false)} 
+        />
       )}
     </AdminReceptionistLayout>
   );

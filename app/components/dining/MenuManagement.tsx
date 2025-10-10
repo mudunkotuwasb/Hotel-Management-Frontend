@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import NewMenuItemPopup from "./NewMenuItemPopup";
 
-//  MenuItem interface based on admin side (NewMenuItemPopup()) form data
+// MenuItem interface based on admin side (NewMenuItemPopup()) form data
 interface MenuItem {
     id: string;
     name: string;
@@ -15,12 +16,18 @@ interface MenuItem {
     image?: string;
 }
 
-export default function MenuManagement() {
+interface MenuManagementProps {
+  onAddNewItem?: () => void;
+}
+
+export default function MenuManagement({ onAddNewItem }: MenuManagementProps) {
     const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>("All category");
-    const [availabilityFilter, setAvailabilityFilter] = useState<string>("All category");
+    const [availabilityFilter, setAvailabilityFilter] = useState<string>("All");
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [editingMenuItem, setEditingMenuItem] = useState<MenuItem | null>(null);
 
     // Replace API endpoint
     const fetchMenuItems = async () => {
@@ -74,7 +81,7 @@ export default function MenuManagement() {
     const filteredItems = menuItems.filter(item => {
         const categoryMatch = selectedCategory === "All category" ||
             item.category.toLowerCase() === selectedCategory.toLowerCase();
-        const availabilityMatch = availabilityFilter === "All category" ||
+        const availabilityMatch = availabilityFilter === "All" ||
             (availabilityFilter === "Available" && item.available) ||
             (availabilityFilter === "Unavailable" && !item.available);
 
@@ -93,16 +100,19 @@ export default function MenuManagement() {
 
         try {
             // Replace API endpoint
-            /* const response = await fetch(`/api/menu-items/${itemId}`, {
-               method: "DELETE",
-             });
+            /* 
+            const response = await fetch(`/api/menu-items/${itemId}`, {
+                method: "DELETE",
+            });
             
-             if (response.ok) {
-               setMenuItems(prev => prev.filter(item => item.id !== itemId));
-             } else {
-               throw new Error("Failed to delete menu item");
-             }
+            if (response.ok) {
+                setMenuItems(prev => prev.filter(item => item.id !== itemId));
+            } else {
+                throw new Error("Failed to delete menu item");
+            }
             */
+            
+            // Local state update for demo
             setMenuItems(prev => prev.filter(item => item.id !== itemId));
             console.log(`Deleted menu item: ${itemId}`);
 
@@ -112,8 +122,39 @@ export default function MenuManagement() {
         }
     };
 
-    const handleEdit = (itemId: string) => {
-        console.log(`Edit menu item: ${itemId}`);
+    // Handle edit menu item - opens popup with existing data
+    const handleEdit = (item: MenuItem) => {
+        setEditingMenuItem(item);
+        setIsPopupOpen(true);
+    };
+
+    // Handle update menu item - updates in local state
+    const handleUpdateMenuItem = (updatedItem: MenuItem) => {
+        setMenuItems(prev => 
+            prev.map(item => 
+                item.id === updatedItem.id ? updatedItem : item
+            )
+        );
+        setEditingMenuItem(null);
+        setIsPopupOpen(false);
+    };
+
+    // Handle create new menu item - adds to local state
+    const handleCreateMenuItem = (newItem: Omit<MenuItem, 'id'>) => {
+        // Generate a simple ID for demo purposes
+        const itemWithId: MenuItem = {
+            ...newItem,
+            id: (menuItems.length + 1).toString()
+        };
+        
+        setMenuItems(prev => [...prev, itemWithId]);
+        setIsPopupOpen(false);
+    };
+
+    // Handle close popup
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+        setEditingMenuItem(null);
     };
 
     if (loading) {
@@ -157,6 +198,12 @@ export default function MenuManagement() {
 
     return (
         <div className="space-y-6">
+            {/* Header - Removed the Add New Item button */}
+            <div>
+                <h1 className="text-2xl font-bold text-gray-900">Menu Management</h1>
+                <p className="text-gray-600">Manage your restaurant menu items</p>
+            </div>
+
             {/* Menu Stats Cards */}
             <div className="grid grid-cols-4 gap-4 mb-6">
                 <div className="bg-white p-4 rounded-lg shadow text-center text-black">
@@ -274,7 +321,7 @@ export default function MenuManagement() {
                                     </span>
                                     <div className="flex space-x-2">
                                         <button
-                                            onClick={() => handleEdit(item.id)}
+                                            onClick={() => handleEdit(item)}
                                             className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                                         >
                                             Edit
@@ -292,6 +339,15 @@ export default function MenuManagement() {
                     </div>
                 )}
             </div>
+
+            {/* New/Edit Menu Item Popup */}
+            <NewMenuItemPopup
+                isOpen={isPopupOpen}
+                onClose={handleClosePopup}
+                editingMenuItem={editingMenuItem}
+                onUpdateMenuItem={handleUpdateMenuItem}
+                onCreateMenuItem={handleCreateMenuItem}
+            />
         </div>
     );
 }
