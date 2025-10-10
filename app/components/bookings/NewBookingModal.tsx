@@ -1,13 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+interface Booking {
+  id: string;
+  guestId: string;
+  roomId: string;
+  checkIn: string;
+  checkOut: string;
+  status: 'confirmed' | 'checked-in' | 'checked-out' | 'cancelled';
+  source: 'direct' | 'booking.com' | 'tripadvisor' | 'expedia' | 'phone' | 'walk-in';
+  package: 'room-only' | 'bed-breakfast' | 'half-board' | 'full-board';
+  totalAmount: number;
+}
+
+interface Guest {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+}
 
 interface NewBookingModalProps {
     isOpen: boolean;
     onClose: () => void;
+    editingBooking?: Booking | null;
+    onUpdateBooking?: (booking: Booking) => void;
 }
 
-export default function NewBookingModal({ isOpen, onClose }: NewBookingModalProps) {
+export default function NewBookingModal({ 
+    isOpen, 
+    onClose, 
+    editingBooking = null,
+    onUpdateBooking 
+}: NewBookingModalProps) {
     const [formData, setFormData] = useState({
         firstName: "Lahiru",
         lastName: "Ellepola",
@@ -27,6 +53,57 @@ export default function NewBookingModal({ isOpen, onClose }: NewBookingModalProp
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
+
+    // Initialize form with editing booking data
+    useEffect(() => {
+        if (editingBooking) {
+            // In a real app, you would fetch the guest details using editingBooking.guestId
+            // For now, using mock guest data
+            const mockGuest = {
+                firstName: "Lahiru",
+                lastName: "Ellepola",
+                email: "lahiruellepola@gmail.com",
+                phone: "76 000 0000"
+            };
+
+            setFormData({
+                firstName: mockGuest.firstName,
+                lastName: mockGuest.lastName,
+                email: mockGuest.email,
+                phone: mockGuest.phone,
+                checkIn: editingBooking.checkIn,
+                checkOut: editingBooking.checkOut,
+                adults: 2, // You might want to add these fields to your Booking interface
+                children: 0,
+                rooms: 1,
+                roomType: "Deluxe", // Map from roomId or add roomType to Booking interface
+                roomNo: editingBooking.roomId,
+                bedPreference: "Double", // Add this to Booking interface if needed
+                mealPlan: editingBooking.package === 'room-only' ? 'Room Only' : 
+                         editingBooking.package === 'bed-breakfast' ? 'Bed & Breakfast' :
+                         editingBooking.package === 'half-board' ? 'Half Board' : 'Full Board',
+                specialRequest: "Near pool" // Add this to Booking interface if needed
+            });
+        } else {
+            // Reset to default values for new booking
+            setFormData({
+                firstName: "Lahiru",
+                lastName: "Ellepola",
+                email: "lahiruellepola@gmail.com",
+                phone: "76 000 0000",
+                checkIn: "2025-09-23",
+                checkOut: "2025-09-24",
+                adults: 2,
+                children: 0,
+                rooms: 1,
+                roomType: "Deluxe",
+                roomNo: "Room 101",
+                bedPreference: "Double",
+                mealPlan: "Bed & Breakfast",
+                specialRequest: "Near pool"
+            });
+        }
+    }, [editingBooking]);
 
     const updateCounter = (field: 'adults' | 'children' | 'rooms', increment: boolean) => {
         setFormData(prev => ({
@@ -60,14 +137,13 @@ export default function NewBookingModal({ isOpen, onClose }: NewBookingModalProp
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     };
 
-    // API INTEGRATION SECTION
-
-    const handleSubmit = async () => {
+    // API INTEGRATION SECTION - CREATE BOOKING
+    const handleCreateBooking = async () => {
         setIsSubmitting(true);
         setSubmitError(null);
 
         try {
-            //Replace actual API endpoint
+            // Replace actual API endpoint
             const API_URL = "ADD_BOOKING_API_ENDPOINT_HERE";
 
             const bookingData = {
@@ -94,12 +170,12 @@ export default function NewBookingModal({ isOpen, onClose }: NewBookingModalProp
                 }
             };
 
+            // COMMENTED OUT UNTIL API IS AVAILABLE
+            /*
             const response = await fetch(API_URL, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    //  Add any required headers like authentication tokens
-                    // "Authorization": "Bearer your-token-here"
                 },
                 body: JSON.stringify(bookingData)
             });
@@ -109,15 +185,98 @@ export default function NewBookingModal({ isOpen, onClose }: NewBookingModalProp
             }
 
             const result = await response.json();
+            */
 
-            // Handle successful booking
-            console.log("Booking created successfully:", result);
+            // Simulate API call success
+            console.log("Booking created successfully:", bookingData);
+            
+            // Handle successful booking creation
             onClose();
-            // alert("Booking created successfully!");
-
+            
         } catch (error) {
             console.error("Error creating booking:", error);
             setSubmitError(error instanceof Error ? error.message : "Failed to create booking");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // API INTEGRATION SECTION - UPDATE BOOKING
+    const handleUpdateBooking = async () => {
+        if (!editingBooking) return;
+
+        setIsSubmitting(true);
+        setSubmitError(null);
+
+        try {
+            // Replace actual API endpoint
+            const API_URL = `UPDATE_BOOKING_API_ENDPOINT_HERE/${editingBooking.id}`;
+
+            const updatedBookingData = {
+                guest: {
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    phone: formData.phone
+                },
+                booking: {
+                    id: editingBooking.id,
+                    checkIn: formData.checkIn,
+                    checkOut: formData.checkOut,
+                    duration: calculateDuration(),
+                    adults: formData.adults,
+                    children: formData.children,
+                    rooms: formData.rooms,
+                    roomType: formData.roomType,
+                    roomNo: formData.roomNo,
+                    bedPreference: formData.bedPreference,
+                    mealPlan: formData.mealPlan,
+                    specialRequest: formData.specialRequest,
+                    status: editingBooking.status, // Keep existing status
+                    totalAmount: editingBooking.totalAmount // Keep existing amount or calculate new one
+                }
+            };
+
+            // COMMENTED OUT UNTIL API IS AVAILABLE
+            /*
+            const response = await fetch(API_URL, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedBookingData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to update booking: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            */
+
+            // Simulate API call success
+            console.log("Booking updated successfully:", updatedBookingData);
+            
+            // Call the update callback if provided
+            if (onUpdateBooking) {
+                const updatedBooking: Booking = {
+                    ...editingBooking,
+                    checkIn: formData.checkIn,
+                    checkOut: formData.checkOut,
+                    roomId: formData.roomNo.replace('Room ', ''),
+                    package: formData.mealPlan === 'Room Only' ? 'room-only' :
+                            formData.mealPlan === 'Bed & Breakfast' ? 'bed-breakfast' :
+                            formData.mealPlan === 'Half Board' ? 'half-board' : 'full-board'
+                };
+                onUpdateBooking(updatedBooking);
+            }
+            
+            // Close modal
+            onClose();
+            
+        } catch (error) {
+            console.error("Error updating booking:", error);
+            setSubmitError(error instanceof Error ? error.message : "Failed to update booking");
         } finally {
             setIsSubmitting(false);
         }
@@ -145,7 +304,11 @@ export default function NewBookingModal({ isOpen, onClose }: NewBookingModalProp
             return;
         }
 
-        handleSubmit();
+        if (editingBooking) {
+            handleUpdateBooking();
+        } else {
+            handleCreateBooking();
+        }
     };
 
     if (!isOpen) return null;
@@ -155,7 +318,9 @@ export default function NewBookingModal({ isOpen, onClose }: NewBookingModalProp
             <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
                 {/* Header */}
                 <div className="p-4 border-b border-gray-300">
-                    <h2 className="text-xl font-bold text-gray-900">New Booking</h2>
+                    <h2 className="text-xl font-bold text-gray-900">
+                        {editingBooking ? 'Edit Booking' : 'New Booking'}
+                    </h2>
                 </div>
 
                 {/* Error Message Display */}
@@ -398,6 +563,7 @@ export default function NewBookingModal({ isOpen, onClose }: NewBookingModalProp
                                             className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-900"
                                         >
                                             <option>Select an Option</option>
+                                            <option>Room Only</option>
                                             <option>Bed & Breakfast</option>
                                             <option>Half Board</option>
                                             <option>Full Board</option>
@@ -530,7 +696,7 @@ export default function NewBookingModal({ isOpen, onClose }: NewBookingModalProp
                                     Processing...
                                 </>
                             ) : (
-                                "Confirm Booking"
+                                editingBooking ? "Update Booking" : "Confirm Booking"
                             )}
                         </button>
                     </div>
