@@ -29,7 +29,6 @@ export default function BillCreation({
 }: BillCreationProps) {
   const isViewMode = mode === "view";
 
-  // States
   const [guestId, setGuestId] = useState(initialGuestId);
   const [bookingId, setBookingId] = useState(initialBookingId);
   const [status, setStatus] = useState(initialStatus);
@@ -41,7 +40,13 @@ export default function BillCreation({
     category: "room",
   });
 
-  // 🔹 Sync state when switching modes or billToView changes
+  // Validation state
+  const [itemErrors, setItemErrors] = useState({
+    description: "",
+    quantity: "",
+    rate: "",
+  });
+
   useEffect(() => {
     if (isViewMode && billToView) {
       setGuestId(billToView.guestId);
@@ -49,16 +54,11 @@ export default function BillCreation({
       setStatus(billToView.status);
       setBillItems(billToView.items);
     } else {
-      // Reset form for create mode
-      setGuestId(initialGuestId);
-      setBookingId(initialBookingId);
-      setStatus(initialStatus);
-      setBillItems([]);
-      setNewItem({ description: "", quantity: 1, rate: 0, category: "room" });
+      resetForm();
     }
   }, [isViewMode, billToView, initialGuestId, initialBookingId, initialStatus]);
 
-  // 🔹 Totals
+  // Totals
   const subtotal = useMemo(
     () => billItems.reduce((sum, item) => sum + item.amount, 0),
     [billItems]
@@ -66,13 +66,34 @@ export default function BillCreation({
   const tax = subtotal * 0.1;
   const total = subtotal + tax;
 
-  // 🔹 Item handlers
   const handleItemChange = (field: keyof BillItem, value: any) => {
     setNewItem((prev) => ({ ...prev, [field]: value }));
+    setItemErrors((prev) => ({ ...prev, [field]: "" })); // Clear error on input
+  };
+
+  const validateNewItem = (): boolean => {
+    let valid = true;
+    const errors = { description: "", quantity: "", rate: "" };
+
+    if (!newItem.description?.trim()) {
+      errors.description = "Description is required";
+      valid = false;
+    }
+    if (!newItem.quantity || newItem.quantity < 1) {
+      errors.quantity = "Quantity must be at least 1";
+      valid = false;
+    }
+    if (newItem.rate === undefined || newItem.rate < 0) {
+      errors.rate = "Rate must be 0 or greater";
+      valid = false;
+    }
+
+    setItemErrors(errors);
+    return valid;
   };
 
   const handleAddItem = () => {
-    if (!newItem.description || !newItem.quantity || !newItem.rate) return;
+    if (!validateNewItem()) return;
 
     const item: BillItem = {
       description: newItem.description!,
@@ -90,9 +111,11 @@ export default function BillCreation({
     setBillItems((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // 🔹 Create bill
   const handleCreateBill = () => {
-    if (!guestId || !bookingId || billItems.length === 0) return;
+    if (!guestId || !bookingId || billItems.length === 0) {
+      alert("Please fill all required fields and add at least one item.");
+      return;
+    }
 
     const newBill: Bill = {
       id: Math.floor(1000 + Math.random() * 9000).toString(),
@@ -116,6 +139,7 @@ export default function BillCreation({
     setStatus(initialStatus);
     setBillItems([]);
     setNewItem({ description: "", quantity: 1, rate: 0, category: "room" });
+    setItemErrors({ description: "", quantity: "", rate: "" });
   };
 
   const filteredBookings = bookings.filter((b) => b.guestId === guestId);
@@ -192,32 +216,56 @@ export default function BillCreation({
       {!isViewMode && (
         <div className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4">
           <h4 className="text-md font-semibold mb-2">Add Bill Item</h4>
-          <div className="grid grid-cols-5 gap-3">
-            <input
-              type="text"
-              placeholder="Description"
-              value={newItem.description}
-              onChange={(e) => handleItemChange("description", e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-            <input
-              type="number"
-              placeholder="Quantity"
-              value={newItem.quantity}
-              onChange={(e) =>
-                handleItemChange("quantity", parseInt(e.target.value))
-              }
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-            <input
-              type="number"
-              placeholder="Rate"
-              value={newItem.rate}
-              onChange={(e) =>
-                handleItemChange("rate", parseFloat(e.target.value))
-              }
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+          <div className="grid grid-cols-5 gap-3 items-end">
+            <div>
+              <input
+                type="text"
+                placeholder="Description"
+                value={newItem.description}
+                onChange={(e) =>
+                  handleItemChange("description", e.target.value)
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              {itemErrors.description && (
+                <p className="text-red-500 text-xs mt-1">
+                  {itemErrors.description}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="number"
+                placeholder="Quantity"
+                value={newItem.quantity ?? 0}
+                onChange={(e) =>
+                  handleItemChange("quantity", parseInt(e.target.value) || 0)
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              {itemErrors.quantity && (
+                <p className="text-red-500 text-xs mt-1">
+                  {itemErrors.quantity}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="number"
+                placeholder="Rate"
+                value={newItem.rate ?? 0}
+                onChange={(e) =>
+                  handleItemChange("rate", parseFloat(e.target.value) || 0)
+                }
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              {itemErrors.rate && (
+                <p className="text-red-500 text-xs mt-1">{itemErrors.rate}</p>
+              )}
+            </div>
+
             <select
               value={newItem.category}
               onChange={(e) =>
@@ -233,6 +281,7 @@ export default function BillCreation({
               <option value="service">Service</option>
               <option value="other">Other</option>
             </select>
+
             <button
               onClick={handleAddItem}
               className="flex items-center justify-center gap-1 bg-blue-500 text-white px-2 py-1 rounded"

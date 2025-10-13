@@ -7,18 +7,17 @@ interface Action {
   onClick?: () => void;
 }
 
-/*interface QuickActionsProps {
-  onCreateNewBill: () => void; // parent function to open the form
-}*/
+interface QuickActionsProps {
+  onCreateBillClick: () => void;
+}
 
-//export default function QuickActions({ onCreateNewBill }: QuickActionsProps) {
-export default function QuickActions() {
+export default function QuickActions({ onCreateBillClick }: QuickActionsProps) {
   const actions: Action[] = [
     {
       label: "Create Bill",
       icon: Plus,
       variant: "primary",
-      onClick: () => console.log("Create Bill"),
+      onClick: onCreateBillClick,
     },
     {
       label: "Generate Report",
