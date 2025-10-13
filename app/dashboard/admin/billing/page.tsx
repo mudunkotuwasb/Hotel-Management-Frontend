@@ -6,7 +6,7 @@ import BillCard from "../../../components/billing/BillCard";
 import AdminReceptionistLayout from "../../../components/layout/AdminReceptionistLayout";
 import BillFilters from "../../../components/billing/BillFilters";
 import QuickActions from "../../../components/billing/QuickActions";
-//import BillCreation from "../../../components/billing/BillCreation";
+import BillCreation from "../../../components/billing/BillCreation";
 
 export interface BillItem {
   description: string;
@@ -90,11 +90,12 @@ const mockBills: Bill[] = [
 ];
 
 export default function Billing() {
-  const [bills] = useState<Bill[]>(mockBills);
+  const [bills, setBills] = useState<Bill[]>(mockBills);
   const [guests] = useState(mockGuests);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
+  const [showBillForm, setShowBillForm] = useState(false);
 
   const filteredBills = useMemo(() => {
     return bills.filter((bill) => {
@@ -140,9 +141,11 @@ export default function Billing() {
 
   const stats = getBillingStats();
 
+  const [billToView, setBillToView] = useState<Bill | null>(null);
+
   const handleViewBill = (bill: Bill) => {
-    console.log("View bill:", bill);
-    // In a real app, this would open a detailed bill view
+    setBillToView(bill);
+    setShowBillForm(true);
   };
 
   const handleDownloadBill = (bill: Bill) => {
@@ -150,9 +153,14 @@ export default function Billing() {
     // In a real app, this would generate and download a PDF
   };
 
-  const handleMarkPaid = (bill: Bill) => {
-    console.log("Mark bill as paid:", bill);
-    // In a real app, this would update the bill status
+  const handleMarkPaid = (billToUpdate: Bill) => {
+    setBills((prevBills) =>
+      prevBills.map((bill) =>
+        bill.id === billToUpdate.id
+          ? { ...bill, status: "paid", paidAt: new Date() }
+          : bill
+      )
+    );
   };
 
   const getGuestForBill = (guestId: string) => {
@@ -187,7 +195,7 @@ export default function Billing() {
 
           <button
             className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition group"
-            //onClick={() => setShowAddForm(true)}
+            onClick={() => setShowBillForm((prev) => !prev)}
           >
             <Plus className="h-4 w-4 mr-2 group-hover:rotate-90 transition-transform" />
             Create Bill
@@ -249,7 +257,28 @@ export default function Billing() {
           }}
         />
 
-        {/*<BillCreation />*/}
+        {showBillForm && (
+          <BillCreation
+            onClose={() => {
+              setShowBillForm(false);
+              setBillToView(null);
+            }}
+            guests={guests.map((g) => ({ id: g.id, name: g.name }))}
+            bookings={[
+              { id: "1", guestId: "1" },
+              { id: "2", guestId: "1" },
+              { id: "3", guestId: "2" },
+            ]}
+            initialGuestId=""
+            initialBookingId=""
+            initialStatus="pending"
+            mode={billToView ? "view" : "create"}
+            billToView={billToView || undefined}
+            onCreateBill={(newBill: Bill) =>
+              setBills((prev) => [newBill, ...prev])
+            }
+          />
+        )}
 
         {/* Results */}
         <div className="flex items-center justify-between mb-4">
