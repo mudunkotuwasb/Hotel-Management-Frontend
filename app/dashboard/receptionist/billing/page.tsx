@@ -95,7 +95,10 @@ export default function Billing() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("all");
+
+  // SINGLE state for modal
   const [showBillForm, setShowBillForm] = useState(false);
+  const [billToView, setBillToView] = useState<Bill | null>(null);
 
   const filteredBills = useMemo(() => {
     return bills.filter((bill) => {
@@ -109,8 +112,8 @@ export default function Billing() {
 
       let matchesDate = true;
       if (dateFilter === "today") {
-        const today = new Date().toDateString();
-        matchesDate = new Date(bill.createdAt).toDateString() === today;
+        matchesDate =
+          new Date(bill.createdAt).toDateString() === new Date().toDateString();
       } else if (dateFilter === "week") {
         const weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
@@ -125,46 +128,49 @@ export default function Billing() {
     });
   }, [bills, guests, searchTerm, statusFilter, dateFilter]);
 
-  const getBillingStats = () => {
-    const total = bills.length;
-    const pending = bills.filter((b) => b.status === "pending").length;
-    const paid = bills.filter((b) => b.status === "paid").length;
-    const totalRevenue = bills
+  const stats = {
+    total: bills.length,
+    pending: bills.filter((b) => b.status === "pending").length,
+    paid: bills.filter((b) => b.status === "paid").length,
+    totalRevenue: bills
       .filter((b) => b.status === "paid")
-      .reduce((sum, b) => sum + b.total, 0);
-    const pendingAmount = bills
+      .reduce((sum, b) => sum + b.total, 0),
+    pendingAmount: bills
       .filter((b) => b.status === "pending")
-      .reduce((sum, b) => sum + b.total, 0);
-
-    return { total, pending, paid, totalRevenue, pendingAmount };
+      .reduce((sum, b) => sum + b.total, 0),
   };
 
-  const stats = getBillingStats();
+  const getGuestForBill = (guestId: string) =>
+    guests.find((g) => g.id === guestId);
 
-  const [billToView, setBillToView] = useState<Bill | null>(null);
+  // HANDLERS
+  const openCreateBill = () => {
+    setBillToView(null);
+    setShowBillForm(true);
+  };
 
   const handleViewBill = (bill: Bill) => {
     setBillToView(bill);
     setShowBillForm(true);
   };
 
-  const handleDownloadBill = (bill: Bill) => {
-    console.log("Download bill:", bill);
-    // In a real app, this would generate and download a PDF
+  const handleCloseBillForm = () => {
+    setBillToView(null);
+    setShowBillForm(false);
   };
 
   const handleMarkPaid = (billToUpdate: Bill) => {
-    setBills((prevBills) =>
-      prevBills.map((bill) =>
-        bill.id === billToUpdate.id
-          ? { ...bill, status: "paid", paidAt: new Date() }
-          : bill
+    setBills((prev) =>
+      prev.map((b) =>
+        b.id === billToUpdate.id
+          ? { ...b, status: "paid", paidAt: new Date() }
+          : b
       )
     );
   };
 
-  const getGuestForBill = (guestId: string) => {
-    return guests.find((guest) => guest.id === guestId);
+  const handleDownloadBill = (bill: Bill) => {
+    console.log("Download bill:", bill);
   };
 
   const statusOptions = [
@@ -195,7 +201,7 @@ export default function Billing() {
 
           <button
             className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition group"
-            onClick={() => setShowBillForm((prev) => !prev)}
+            onClick={openCreateBill}
           >
             <Plus className="h-4 w-4 mr-2 group-hover:rotate-90 transition-transform" />
             Create Bill
@@ -257,12 +263,10 @@ export default function Billing() {
           }}
         />
 
+        {/* BillCreation Modal */}
         {showBillForm && (
           <BillCreation
-            onClose={() => {
-              setShowBillForm(false);
-              setBillToView(null);
-            }}
+            onClose={handleCloseBillForm}
             guests={guests.map((g) => ({ id: g.id, name: g.name }))}
             bookings={[
               { id: "1", guestId: "1" },
@@ -280,7 +284,7 @@ export default function Billing() {
           />
         )}
 
-        {/* Results */}
+        {/* Bills List */}
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Bills</h3>
           <p className="text-sm text-gray-600">
@@ -314,7 +318,7 @@ export default function Billing() {
         )}
 
         {/* Quick Actions */}
-        <QuickActions />
+        <QuickActions onCreateBillClick={openCreateBill} />
       </div>
     </AdminReceptionistLayout>
   );
