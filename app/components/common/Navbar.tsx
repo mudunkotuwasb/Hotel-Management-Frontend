@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Calendar,
   Bed,
@@ -53,6 +53,14 @@ const tabs = [
 export default function Navbar() {
   const [activeTab, setActiveTab] = useState("overview");
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const currentTab = tabs.find(tab => pathname === tab.href);
+    if (currentTab) {
+      setActiveTab(currentTab.id);
+    }
+  }, [pathname]);
 
   const handleClick = (tabId: string, href: string) => {
     setActiveTab(tabId);
