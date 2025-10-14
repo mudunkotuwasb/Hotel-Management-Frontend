@@ -3,8 +3,11 @@
 
 import { useState, useEffect } from "react";
 import CustomerLayout from "../../../components/layout/CustomerLayout";
+import OrderSelectionModal from "./OrderSelectionModal";
+import OrderConfirmationModal from "./OrderConfirmationModal";
+import { SelectedMenuItem } from "./OrderSelectionModal";
 
-// Define the menu item interface based on NewMenuItemPopup form data
+// Define the menu item interface based on NewMenuItemPopup()
 interface MenuItem {
   id: string;
   name: string;
@@ -22,8 +25,11 @@ export default function RestaurantMenuPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [selectedOrderItems, setSelectedOrderItems] = useState<SelectedMenuItem[]>([]);
 
-  // Replace with actual API endpoint
+  // ADD API endpoint
   const fetchMenuItems = async () => {
     try {
       setLoading(true);
@@ -35,20 +41,29 @@ export default function RestaurantMenuPage() {
       const mockData: MenuItem[] = [
         {
           id: "1",
+          name: "Grilled Salmon",
+          category: "Dinner",
+          description: "Fresh Atlantic salmon with herbs and lemon",
+          ingredients: ["Salmon", "Herbs", "Lemon", "Olive Oil"],
+          price: 28,
+          available: true
+        },
+        {
+          id: "2",
           name: "Continental Breakfast",
-          category: "breakfast",
+          category: "Breakfast",
           description: "Fresh pastries, fruits, coffee, and juice",
           ingredients: ["Pastries", "Fruits", "Coffee", "Juice"],
           price: 15,
           available: true
         },
         {
-          id: "2",
-          name: "Grilled Salmon",
-          category: "dinner",
-          description: "Fresh Atlantic salmon with herbs and lemon",
-          ingredients: ["Salmon", "Herbs", "Lemon", "Olive Oil"],
-          price: 28,
+          id: "3",
+          name: "Caesar Salad",
+          category: "Lunch",
+          description: "Crisp romaine lettuce with Caesar dressing and croutons",
+          ingredients: ["Romaine Lettuce", "Caesar Dressing", "Croutons", "Parmesan"],
+          price: 12,
           available: true
         }
       ];
@@ -67,48 +82,32 @@ export default function RestaurantMenuPage() {
   }, []);
 
   // Get unique categories for filter
-  const categories = ["All", ...new Set(menuItems.map(item => 
-    item.category.charAt(0).toUpperCase() + item.category.slice(1)
-  ))];
+  const categories = ["All", ...new Set(menuItems.map(item => item.category))];
 
   // Filter menu items by selected category
   const filteredItems = selectedCategory === "All" 
     ? menuItems 
-    : menuItems.filter(item => 
-        item.category.toLowerCase() === selectedCategory.toLowerCase()
-      );
+    : menuItems.filter(item => item.category === selectedCategory);
 
-  // Handle order placement
-  const handleOrder = async (itemId: string) => {
-    try {
-      // TODO: Replace with actual API endpoint when available
-      // const response = await fetch("/api/orders", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     menuItemId: itemId,
-      //     quantity: 1,
-      //     // Add other necessary order details
-      //   }),
-      // });
-      
-      // if (response.ok) {
-      //   // Show success message or update UI
-      //   console.log("Order placed successfully");
-      // } else {
-      //   throw new Error("Failed to place order");
-      // }
-      
-      console.log(`Order placed for item: ${itemId}`);
-      // Temporary success handling until API is implemented
-      alert("Order placed successfully! This will be integrated with the ordering system.");
-      
-    } catch (err) {
-      console.error("Error placing order:", err);
-      alert("Failed to place order. Please try again.");
-    }
+  const handleProceedToOrder = (selectedItems: SelectedMenuItem[]) => {
+    setSelectedOrderItems(selectedItems);
+    setIsOrderModalOpen(false);
+    setIsConfirmationModalOpen(true);
+  };
+
+  const handleBackToSelection = () => {
+    setIsConfirmationModalOpen(false);
+    setIsOrderModalOpen(true);
+  };
+
+  // Handle individual item order
+  const handleIndividualOrder = (menuItem: MenuItem) => {
+    const selectedItem: SelectedMenuItem = {
+      menuItem: menuItem,
+      quantity: 1
+    };
+    setSelectedOrderItems([selectedItem]);
+    setIsConfirmationModalOpen(true);
   };
 
   if (loading) {
@@ -144,7 +143,10 @@ export default function RestaurantMenuPage() {
             <h1 className="text-2xl font-bold text-gray-900 mb-1">Restaurant Menu</h1>
             <p className="text-base text-gray-600">Explore our delicious dining options</p>
           </div>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+          <button 
+            onClick={() => setIsOrderModalOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+          >
             + Order
           </button>
         </div>
@@ -227,7 +229,7 @@ export default function RestaurantMenuPage() {
                   ))}
                 </div>
 
-                {/* Status + Order Now */}
+                {/* Status + Order Button */}
                 <div className="flex justify-between items-center">
                   <span
                     className={`text-xs font-medium px-2 py-1 rounded-full ${
@@ -238,22 +240,40 @@ export default function RestaurantMenuPage() {
                   >
                     {item.available ? "Available" : "Unavailable"}
                   </span>
+                  
+                  {/* Order Button */}
                   <button
-                    onClick={() => handleOrder(item.id)}
-                    className={`py-1 px-4 rounded-md font-medium text-sm transition-colors ${
+                    onClick={() => handleIndividualOrder(item)}
+                    disabled={!item.available}
+                    className={`py-2 px-4 rounded-md font-medium text-sm transition-colors ${
                       item.available
                         ? "bg-blue-600 hover:bg-blue-700 text-white"
                         : "bg-gray-100 text-gray-500 cursor-not-allowed"
                     }`}
-                    disabled={!item.available}
                   >
-                    {item.available ? "Order Now" : "Not Available"}
+                    Order
                   </button>
                 </div>
               </div>
             ))}
           </div>
         )}
+
+        {/* Order Selection Modal */}
+        <OrderSelectionModal
+          isOpen={isOrderModalOpen}
+          onClose={() => setIsOrderModalOpen(false)}
+          menuItems={menuItems}
+          onProceedToOrder={handleProceedToOrder}
+        />
+
+        {/* Order Confirmation Modal */}
+        <OrderConfirmationModal
+          isOpen={isConfirmationModalOpen}
+          onClose={() => setIsConfirmationModalOpen(false)}
+          selectedItems={selectedOrderItems}
+          onBack={handleBackToSelection}
+        />
       </div>
     </CustomerLayout>
   );
