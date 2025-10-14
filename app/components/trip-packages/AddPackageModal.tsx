@@ -187,7 +187,7 @@ export default function AddPackageModal({
     // Success Message Modal
     if (showSuccess) {
         return (
-            <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
                 <div className="bg-white rounded-lg w-full max-w-md p-6">
                     <div className="text-center">
                         {/* Success Icon */}
@@ -224,7 +224,7 @@ export default function AddPackageModal({
     }
 
     return (
-        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
             <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 <div className="p-6">
                     <h2 className="text-xl font-bold mb-6 text-black">
