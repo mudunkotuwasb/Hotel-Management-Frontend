@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Mail, Phone, Calendar, Save, Edit, LogIn } from "lucide-react";
 import toast from "react-hot-toast";
 import CustomerLayout from "../../../components/layout/CustomerLayout";
 import Link from "next/link";
@@ -23,7 +22,6 @@ interface UserProfile {
 
 export default function ProfilePage() {
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
@@ -31,36 +29,114 @@ export default function ProfilePage() {
     phone: "",
   });
 
+  // Mock user data for demo accounts
+  const demoUsers = {
+    "customer@example.com": {
+      id: "demo_customer",
+      name: "Demo Customer",
+      email: "customer@example.com",
+      phone: "+1-555-0789",
+      joinDate: "January 15, 2024",
+      preferences: {
+        nonSmoking: true,
+        highFloor: true,
+        lateCheckout: false,
+        newsletter: true,
+      }
+    },
+    "admin@hotel.com": {
+      id: "demo_admin",
+      name: "Admin User",
+      email: "admin@hotel.com",
+      phone: "+1-555-0001",
+      joinDate: "January 1, 2024",
+      preferences: {
+        nonSmoking: true,
+        highFloor: false,
+        lateCheckout: true,
+        newsletter: true,
+      }
+    },
+    "receptionist@hotel.com": {
+      id: "demo_receptionist",
+      name: "Receptionist User",
+      email: "receptionist@hotel.com",
+      phone: "+1-555-0002",
+      joinDate: "January 10, 2024",
+      preferences: {
+        nonSmoking: true,
+        highFloor: true,
+        lateCheckout: true,
+        newsletter: false,
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       setIsLoading(true);
       try {
-        // Get user data from localStorage
-        const userData = localStorage.getItem("currentUser");
+        // TODO: Replace with actual API endpoint when available
+        /*
+        const response = await fetch('/api/user/profile');
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        const userData = await response.json();
+        setUser(userData);
+        setFormData({
+          name: userData.name,
+          email: userData.email,
+          phone: userData.phone,
+        });
+        */
+
+        // For now, use localStorage data or demo data
+        const storedUser = localStorage.getItem("currentUser");
+        const userEmail = localStorage.getItem("currentUserEmail");
         
-        if (userData) {
-          const userProfile: UserProfile = JSON.parse(userData);
-          setUser(userProfile);
+        if (storedUser) {
+          const userData: UserProfile = JSON.parse(storedUser);
+          setUser(userData);
           setFormData({
-            name: userProfile.name,
-            email: userProfile.email,
-            phone: userProfile.phone,
+            name: userData.name,
+            email: userData.email,
+            phone: userData.phone,
           });
+        } else if (userEmail && demoUsers[userEmail as keyof typeof demoUsers]) {
+          // Use demo user data
+          const demoUser = demoUsers[userEmail as keyof typeof demoUsers];
+          setUser(demoUser);
+          setFormData({
+            name: demoUser.name,
+            email: demoUser.email,
+            phone: demoUser.phone,
+          });
+          // Store for future use
+          localStorage.setItem("currentUser", JSON.stringify(demoUser));
         } else {
-          // if user is logged in demo accounts
-          const demoUserData = getDemoUserData();
-          if (demoUserData) {
-            setUser(demoUserData);
-            setFormData({
-              name: demoUserData.name,
-              email: demoUserData.email,
-              phone: demoUserData.phone,
-            });
-          }
+          // Fallback to customer demo data
+          const fallbackUser = demoUsers["customer@example.com"];
+          setUser(fallbackUser);
+          setFormData({
+            name: fallbackUser.name,
+            email: fallbackUser.email,
+            phone: fallbackUser.phone,
+          });
+          localStorage.setItem("currentUser", JSON.stringify(fallbackUser));
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
         toast.error("Failed to load profile data");
+        
+        // Fallback to customer demo data on error
+        const fallbackUser = demoUsers["customer@example.com"];
+        setUser(fallbackUser);
+        setFormData({
+          name: fallbackUser.name,
+          email: fallbackUser.email,
+          phone: fallbackUser.phone,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -69,81 +145,40 @@ export default function ProfilePage() {
     fetchUserData();
   }, []);
 
-  // Function to get demo user data based on email
-  const getDemoUserData = (): UserProfile | null => {
-    if (typeof window === 'undefined') return null;
-
-    const currentUserEmail = localStorage.getItem("currentUserEmail");
-    
-    if (currentUserEmail) {
-      // Return demo user data based on email
-      const demoUsers: { [key: string]: UserProfile } = {
-        "customer@example.com": {
-          id: "demo_customer",
-          name: "Demo Customer",
-          email: "customer@example.com",
-          phone: "+1-555-0789",
-          joinDate: "January 15, 2024",
-          preferences: {
-            nonSmoking: true,
-            highFloor: true,
-            lateCheckout: false,
-            newsletter: true,
-          }
-        },
-        "admin@hotel.com": {
-          id: "demo_admin",
-          name: "Admin User",
-          email: "admin@hotel.com",
-          phone: "+1-555-0001",
-          joinDate: "January 1, 2024",
-          preferences: {
-            nonSmoking: true,
-            highFloor: false,
-            lateCheckout: true,
-            newsletter: true,
-          }
-        },
-        "receptionist@hotel.com": {
-          id: "demo_receptionist",
-          name: "Receptionist User",
-          email: "receptionist@hotel.com",
-          phone: "+1-555-0002",
-          joinDate: "January 10, 2024",
-          preferences: {
-            nonSmoking: true,
-            highFloor: true,
-            lateCheckout: true,
-            newsletter: false,
-          }
-        }
-      };
-
-      return demoUsers[currentUserEmail] || null;
-    }
-
-    return null;
-  };
-
   const handleSave = async () => {
     if (!user) return;
 
     try {
+      // TODO: Replace with actual API endpoint when available
+      /*
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      const updatedUser = await response.json();
+      setUser(updatedUser);
+      */
+
+      // For now, update localStorage
       const updatedUser: UserProfile = {
         ...user,
         name: formData.name,
         phone: formData.phone,
       };
 
-      if (user.id.startsWith("user_")) {
-        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
-        localStorage.setItem(`user_${user.email}`, JSON.stringify(updatedUser));
-      } else {
-        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
-      }
-
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
       setUser(updatedUser);
-      setIsEditing(false);
       toast.success("Profile updated successfully!");
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -154,22 +189,39 @@ export default function ProfilePage() {
   const handlePreferenceChange = (preference: keyof UserProfile['preferences']) => {
     if (!user) return;
 
-    const updatedUser: UserProfile = {
-      ...user,
-      preferences: {
-        ...user.preferences,
-        [preference]: !user.preferences[preference],
-      },
-    };
+    try {
+      const updatedUser: UserProfile = {
+        ...user,
+        preferences: {
+          ...user.preferences,
+          [preference]: !user.preferences[preference],
+        },
+      };
 
-    setUser(updatedUser);
-    
-    // Save preferences for both registered and demo users
-    localStorage.setItem("currentUser", JSON.stringify(updatedUser));
-    
-    // For registered users, also update their main profile
-    if (user.id.startsWith("user_")) {
-      localStorage.setItem(`user_${user.email}`, JSON.stringify(updatedUser));
+      // TODO: Replace with actual API endpoint when available
+      /*
+      const response = await fetch('/api/user/preferences', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          [preference]: !user.preferences[preference],
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update preferences');
+      }
+      */
+
+      // For now, update localStorage
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      toast.success("Preferences updated!");
+    } catch (error) {
+      console.error("Error updating preferences:", error);
+      toast.error("Failed to update preferences");
     }
   };
 
@@ -188,18 +240,14 @@ export default function ProfilePage() {
       <CustomerLayout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center max-w-md mx-auto p-8">
-            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <LogIn className="h-10 w-10 text-blue-600" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Please Log In</h2>
-            <p className="text-gray-600 mb-6">
+            <h2 className="text-2xl font-bold text-black mb-4">Please Log In</h2>
+            <p className="text-black mb-6">
               You need to be logged in to view your profile. Please sign in to access your account information.
             </p>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors"
             >
-              <LogIn className="h-5 w-5" />
               Go to Login
             </Link>
           </div>
@@ -210,186 +258,101 @@ export default function ProfilePage() {
 
   return (
     <CustomerLayout>
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
-            <p className="text-gray-600 mt-2">Manage your account information</p>
-            {user.id.startsWith("demo_") && (
-              <div className="mt-2 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                <p className="text-yellow-800 text-sm">
-                  <strong>Demo Account:</strong> Some features may be limited in demo mode.
-                </p>
+      <div className="space-y-6 p-6">
+        <div>
+          <h2 className="text-2xl font-bold text-black mb-2">My Profile</h2>
+          <p className="text-black">Manage your account information</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-black mb-4">Personal Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-black mb-1">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-black mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    readOnly
+                    className="w-full border border-gray-300 rounded px-3 py-2 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-black mb-1">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                  />
+                </div>
               </div>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Personal Information */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
-                  {!user.id.startsWith("demo_") && (
-                    <button
-                      onClick={() => setIsEditing(!isEditing)}
-                      className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      <Edit className="h-4 w-4" />
-                      {isEditing ? "Cancel" : "Edit"}
-                    </button>
-                  )}
-                </div>
-
-                <div className="space-y-6">
-                  {/* Full Name */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name
-                    </label>
-                    {isEditing ? (
-                      <div className="relative">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <input
-                          type="text"
-                          value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          className="w-full border border-gray-300 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter your full name"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <User className="h-5 w-5 text-gray-400" />
-                        <span className="text-gray-900 font-medium">{user.name}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Email */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email
-                    </label>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Mail className="h-5 w-5 text-gray-400" />
-                      <span className="text-gray-900 font-medium">{user.email}</span>
-                    </div>
-                    <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
-                  </div>
-
-                  {/* Join Date */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Member Since
-                    </label>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                      <Calendar className="h-5 w-5 text-gray-400" />
-                      <span className="text-gray-900 font-medium">{user.joinDate}</span>
-                    </div>
-                  </div>
-
-                  {/* Phone */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone
-                    </label>
-                    {isEditing ? (
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        <input
-                          type="tel"
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          className="w-full border border-gray-300 rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="Enter your phone number"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                        <Phone className="h-5 w-5 text-gray-400" />
-                        <span className="text-gray-900 font-medium">{user.phone}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Save Button */}
-                  {isEditing && (
-                    <button
-                      onClick={handleSave}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Save className="h-5 w-5" />
-                      Save Changes
-                    </button>
-                  )}
-                </div>
+              <div className="mt-6">
+                <button
+                  onClick={handleSave}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors"
+                >
+                  Save Changes
+                </button>
               </div>
             </div>
+          </div>
 
-            {/* Right Column - Preferences */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Preferences</h2>
-
-                <div className="space-y-4">
-                  {/* Non-smoking Room */}
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">
-                      Non-smoking room
-                    </label>
-                    <button
-                      onClick={() => handlePreferenceChange('nonSmoking')}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        user.preferences.nonSmoking ? 'bg-blue-600' : 'bg-gray-200'
-                      }`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          user.preferences.nonSmoking ? 'translate-x-6' : 'translate-x-1'
-                        }`}
-                      />
-                    </button>
-                  </div>
-
-                  {/* High Floor Preference */}
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">
-                      High floor preference
-                    </label>
-                    <button
-                      onClick={() => handlePreferenceChange('highFloor')}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        user.preferences.highFloor ? 'bg-blue-600' : 'bg-gray-200'
-                      }`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          user.preferences.highFloor ? 'translate-x-6' : 'translate-x-1'
-                        }`}
-                      />
-                    </button>
-                  </div>
-
-                  {/* Late Checkout */}
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-gray-700">
-                      Late checkout preference
-                    </label>
-                    <button
-                      onClick={() => handlePreferenceChange('lateCheckout')}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        user.preferences.lateCheckout ? 'bg-blue-600' : 'bg-gray-200'
-                      }`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          user.preferences.lateCheckout ? 'translate-x-6' : 'translate-x-1'
-                        }`}
-                      />
-                    </button>
-                  </div>
+          <div>
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-black mb-4">Preferences</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-black">Non-smoking room</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={user.preferences.nonSmoking}
+                      onChange={() => handlePreferenceChange('nonSmoking')}
+                      className="sr-only peer" 
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-black">High floor preference</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={user.preferences.highFloor}
+                      onChange={() => handlePreferenceChange('highFloor')}
+                      className="sr-only peer" 
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-black">Late checkout preference</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={user.preferences.lateCheckout}
+                      onChange={() => handlePreferenceChange('lateCheckout')}
+                      className="sr-only peer" 
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
                 </div>
               </div>
             </div>
