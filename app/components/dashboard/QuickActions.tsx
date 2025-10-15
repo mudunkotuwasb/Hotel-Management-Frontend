@@ -21,25 +21,25 @@ export default function QuickActions({ actions }: QuickActionsProps) {
       label: "New Booking",
       icon: Plus,
       variant: "primary",
-      onClick: () => console.log("Add"),
+      onClick: () => console.log("New"),
     },
     {
       label: "Check-In",
       icon: CheckCircle,
       variant: "secondary",
-      onClick: () => console.log("Restock"),
+      onClick: () => console.log("CheckIn"),
     },
     {
       label: "Room Management",
       icon: Users,
       variant: "success",
-      onClick: () => console.log("Report"),
+      onClick: () => console.log("Room"),
     },
     {
       label: "New Order",
       icon: Utensils,
       variant: "warning",
-      onClick: () => console.log("Alert"),
+      onClick: () => console.log("Order"),
     },
   ];
 
