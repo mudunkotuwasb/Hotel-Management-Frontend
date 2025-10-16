@@ -19,13 +19,17 @@ export default function GuestInfo({ data, updateData, nextStep }: GuestInfoProps
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 md:p-6">
-      <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-gray-800">Guest Information</h2>
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      {/* Section Titles */}
+      <div className="mb-6">
+        <h2 className="text-xl font-bold text-gray-800">Guest Information</h2>
+      </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Name Fields */}
+        <div className="space-y-4">
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-1 sm:mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               First Name *
             </label>
             <input
@@ -33,13 +37,13 @@ export default function GuestInfo({ data, updateData, nextStep }: GuestInfoProps
               required
               value={data.guestInfo.firstName}
               onChange={(e) => updateData('guestInfo', { firstName: e.target.value })}
-              className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all text-black"
+              className="w-full px-4 py-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
               placeholder="First name"
             />
           </div>
           
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-1 sm:mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Last Name *
             </label>
             <input
@@ -47,46 +51,51 @@ export default function GuestInfo({ data, updateData, nextStep }: GuestInfoProps
               required
               value={data.guestInfo.lastName}
               onChange={(e) => updateData('guestInfo', { lastName: e.target.value })}
-              className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all text-black"
+              className="w-full px-4 py-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
               placeholder="Last name"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-1 sm:mb-2">
-              Email Address *
-            </label>
-            <input
-              type="email"
-              required
-              value={data.guestInfo.email}
-              onChange={(e) => updateData('guestInfo', { email: e.target.value })}
-              className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all text-black"
-              placeholder="email@example.com"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-gray-600 mb-1 sm:mb-2">
-              Phone Number *
-            </label>
+        {/* Contact Fields */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Email Address *
+          </label>
+          <input
+            type="email"
+            required
+            value={data.guestInfo.email}
+            onChange={(e) => updateData('guestInfo', { email: e.target.value })}
+            className="w-full px-4 py-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
+            placeholder="email@example.com"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Phone Number *
+          </label>
+          <div className="flex">
+            <div className="flex items-center px-4 py-3 bg-gray-100 border border-r-0 border-gray-300 rounded-l-md text-gray-600">
+              +94
+            </div>
             <input
               type="tel"
               required
               value={data.guestInfo.phone}
               onChange={(e) => updateData('guestInfo', { phone: e.target.value })}
-              className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all text-black"
+              className="flex-1 px-4 py-3 text-sm border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
               placeholder="+94 XXX XXX XXX"
             />
           </div>
         </div>
 
-        <div className="flex justify-end pt-4 sm:pt-6">
+        {/* Next Button */}
+        <div className="flex justify-end pt-4">
           <button
             type="submit"
-            className="w-full sm:w-auto bg-blue-500 text-white px-5 py-2.5 sm:py-2 text-sm rounded-lg hover:bg-blue-600 transition-colors font-medium shadow-sm hover:shadow-md"
+            className="bg-blue-600 text-white px-6 py-3 text-sm font-medium rounded-md hover:bg-blue-700 transition-colors shadow-sm"
           >
             Next →
           </button>
