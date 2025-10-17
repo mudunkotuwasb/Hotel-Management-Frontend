@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { Edit, Trash2, User } from "lucide-react";
-import AddUserForm from "@/app/components/settings/AddUserForm";
+import { toast } from "react-toastify";
+import AddUserForm from "../../components/settings/AddUserForm";
 
 export default function UsersTab() {
   const [showForm, setShowForm] = useState(false);
@@ -46,6 +47,7 @@ export default function UsersTab() {
   }) => {
     const userWithId = { id: Date.now().toString(), ...newUser };
     setUsers([...users, userWithId]);
+    toast.success("User added successfully!");
   };
 
   // 🟡 Handle Update
@@ -58,9 +60,10 @@ export default function UsersTab() {
   }) => {
     setUsers(users.map((u) => (u.id === updatedUser.id ? updatedUser : u)));
     setEditUser(null);
+    toast.success("User updated successfully!");
   };
 
-  // 🔴 Handle Delete
+  // 🔴 Handle Delete with toast
   const handleDeleteUser = (id: string) => {
     const userToDelete = users.find((u) => u.id === id);
     if (!userToDelete) return;
@@ -70,6 +73,7 @@ export default function UsersTab() {
     );
     if (confirmed) {
       setUsers(users.filter((u) => u.id !== id));
+      toast.success(`${userToDelete.name} has been deleted.`);
     }
   };
 
@@ -95,7 +99,7 @@ export default function UsersTab() {
       {/* Add / Edit Form */}
       {showForm && (
         <AddUserForm
-          key={editUser ? editUser.id : "new"} // re-render on edit
+          key={editUser ? editUser.id : "new"}
           onAddUser={handleAddUser}
           onUpdateUser={handleUpdateUser}
           onCancel={() => {
@@ -152,7 +156,6 @@ export default function UsersTab() {
                   >
                     <Edit className="h-4 w-4" />
                   </button>
-
                   <button
                     onClick={() => handleDeleteUser(user.id)}
                     className="text-red-600 hover:text-red-800"

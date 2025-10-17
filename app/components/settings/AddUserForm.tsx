@@ -40,23 +40,47 @@ export default function AddUserForm({
     status: "active",
   });
 
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    role: "",
+  });
+
   useEffect(() => {
     if (existingUser) {
       setFormData(existingUser);
     }
   }, [existingUser]);
 
+  const validate = () => {
+    const newErrors: any = {};
+    if (!formData.name.trim()) newErrors.name = "Full name is required.";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format.";
+    }
+    if (!formData.role) newErrors.role = "Please select a role.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.role) {
-      alert("Please fill all required fields");
-      return;
-    }
+    if (!validate()) return;
 
     if (existingUser) {
       onUpdateUser(formData);
     } else {
       onAddUser(formData);
+    }
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setFormData({ ...formData, [field]: value });
+    if (errors[field as keyof typeof errors]) {
+      setErrors({ ...errors, [field]: "" }); // clear error when user fixes input
     }
   };
 
@@ -75,6 +99,7 @@ export default function AddUserForm({
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4"
       >
+        {/* Full Name */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Full Name
@@ -82,11 +107,19 @@ export default function AddUserForm({
           <input
             type="text"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            onChange={(e) => handleChange("name", e.target.value)}
+            className={`w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none ${
+              errors.name
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            }`}
           />
+          {errors.name && (
+            <p className="text-sm text-red-600 mt-1">{errors.name}</p>
+          )}
         </div>
 
+        {/* Email */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Email
@@ -94,38 +127,50 @@ export default function AddUserForm({
           <input
             type="email"
             value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            onChange={(e) => handleChange("email", e.target.value)}
+            className={`w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none ${
+              errors.email
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            }`}
           />
+          {errors.email && (
+            <p className="text-sm text-red-600 mt-1">{errors.email}</p>
+          )}
         </div>
 
+        {/* Role */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Role
           </label>
           <select
             value={formData.role}
-            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            onChange={(e) => handleChange("role", e.target.value)}
+            className={`w-full border rounded-lg px-3 py-2 text-gray-700 focus:outline-none ${
+              errors.role
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            }`}
           >
             <option value="">Select Role</option>
             <option value="admin">Admin</option>
             <option value="receptionist">Receptionist</option>
             <option value="customer">Customer</option>
           </select>
+          {errors.role && (
+            <p className="text-sm text-red-600 mt-1">{errors.role}</p>
+          )}
         </div>
 
+        {/* Status */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Status
           </label>
           <select
             value={formData.status}
-            onChange={(e) =>
-              setFormData({ ...formData, status: e.target.value })
-            }
+            onChange={(e) => handleChange("status", e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <option value="active">Active</option>
@@ -133,6 +178,7 @@ export default function AddUserForm({
           </select>
         </div>
 
+        {/* Submit */}
         <div className="flex items-end">
           <button
             type="submit"
