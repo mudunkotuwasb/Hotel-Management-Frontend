@@ -35,8 +35,6 @@ export default function Preferences({ data, updateData, nextStep, prevStep }: Pr
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 md:p-6">
-      <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-gray-800">Preferences</h2>
-
       <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
         {/* Bed Preference */}
         <div>

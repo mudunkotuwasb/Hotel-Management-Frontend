@@ -174,18 +174,18 @@ export default function OrderSelectionModal({
                                                 {item.available ? "Available" : "Unavailable"}
                                             </span>
 
-                                            {isSelected && (
+                                                                                        {isSelected && (
                                                 <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
                                                     <button
                                                         onClick={() => updateQuantity(item.id, (selectedItem?.quantity || 1) - 1)}
-                                                        className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                                                        className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 text-black font-bold"
                                                     >
                                                         -
                                                     </button>
-                                                    <span className="text-sm font-medium">{selectedItem?.quantity || 1}</span>
+                                                    <span className="text-sm font-medium text-black">{selectedItem?.quantity || 1}</span>
                                                     <button
                                                         onClick={() => updateQuantity(item.id, (selectedItem?.quantity || 1) + 1)}
-                                                        className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                                                        className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 text-black font-bold"
                                                     >
                                                         +
                                                     </button>

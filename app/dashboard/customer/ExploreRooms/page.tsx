@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from "react";
 import CustomerLayout from "../../../components/layout/CustomerLayout";
+import NewBookingModal from "../bookings/NewBookingModal";
 
 // Define the room interface to match your Rooms() component
 interface Room {
@@ -78,24 +79,26 @@ export default function ExploreRoomsPage() {
     maxPrice: 500,
     minOccupancy: 1,
   });
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
-  // Simulate API call to fetch rooms from data warehouse
+
   useEffect(() => {
     const fetchRooms = async () => {
       try {
         setLoading(true);
-        // TODO: Replace with actual API call
+        // Add API endpoint
         // const response = await fetch('/api/rooms');
         // const data = await response.json();
 
-        // For now, use sample data and simulate API delay
+        // use sample data and simulate API delay
         setTimeout(() => {
           setRooms(sampleRooms);
           setLoading(false);
         }, 1000);
       } catch (error) {
         console.error('Error fetching rooms:', error);
-        setRooms(sampleRooms); // Fallback to sample data
+        setRooms(sampleRooms);
         setLoading(false);
       }
     };
@@ -128,6 +131,16 @@ export default function ExploreRoomsPage() {
       case "maintenance": return "Maintenance";
       default: return "Unknown";
     }
+  };
+
+  const handleBookNow = (room: Room) => {
+    setSelectedRoom(room);
+    setIsBookingModalOpen(true);
+  };
+
+  const handleBookingComplete = () => {
+    setIsBookingModalOpen(false);
+    setSelectedRoom(null);
   };
 
   if (loading) {
@@ -251,8 +264,8 @@ export default function ExploreRoomsPage() {
                       Room {room.number}
                     </h3>
                     <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${room.status === "available"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
                       }`}>
                       {getDisplayStatus(room.status)}
                     </span>
@@ -297,9 +310,10 @@ export default function ExploreRoomsPage() {
 
                 {/* Book Now Button */}
                 <button
+                  onClick={() => handleBookNow(room)}
                   className={`w-full py-2 px-3 rounded-md font-medium text-sm transition-colors ${room.status === "available"
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "bg-gray-100 text-gray-500 cursor-not-allowed"
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "bg-gray-100 text-gray-500 cursor-not-allowed"
                     }`}
                   disabled={room.status !== "available"}
                 >
@@ -329,6 +343,14 @@ export default function ExploreRoomsPage() {
               Clear all filters
             </button>
           </div>
+        )}
+
+        {/* Booking Modal */}
+        {isBookingModalOpen && selectedRoom && (
+          <NewBookingModal
+            onClose={() => setIsBookingModalOpen(false)}
+            onComplete={handleBookingComplete}
+          />
         )}
       </div>
     </CustomerLayout>

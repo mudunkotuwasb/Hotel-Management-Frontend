@@ -90,8 +90,18 @@ export default function OrderConfirmationModal({
                 <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                     {/* Header */}
                     <div className="p-6 border-b border-gray-200">
-                        <h2 className="text-2xl font-bold text-gray-900">Orders</h2>
-                        <p className="text-gray-600 mt-1">Selected dishes</p>
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-900">Orders</h2>
+                                <p className="text-gray-600 mt-1">Selected dishes</p>
+                            </div>
+                            <button
+                                onClick={onClose}
+                                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                            >
+                                ×
+                            </button>
+                        </div>
                     </div>
 
                     <div className="p-6">

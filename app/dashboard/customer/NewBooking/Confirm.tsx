@@ -221,11 +221,6 @@ export default function Confirm({ data, prevStep, onComplete }: ConfirmProps) {
   // Original Confirmation Form
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      
-      {/* Section Title */}
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-800">Confirm Booking</h2>
-      </div>
 
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">

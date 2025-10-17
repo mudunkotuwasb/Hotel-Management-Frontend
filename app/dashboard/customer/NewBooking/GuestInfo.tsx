@@ -18,13 +18,14 @@ export default function GuestInfo({ data, updateData, nextStep }: GuestInfoProps
     nextStep();
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digitsOnly = e.target.value.replace(/\D/g, '');
+    const limitedDigits = digitsOnly.slice(0, 9);
+    updateData('guestInfo', { phone: limitedDigits });
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-      {/* Section Titles */}
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-800">Guest Information</h2>
-      </div>
-      
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Name Fields */}
         <div className="space-y-4">
@@ -84,9 +85,12 @@ export default function GuestInfo({ data, updateData, nextStep }: GuestInfoProps
               type="tel"
               required
               value={data.guestInfo.phone}
-              onChange={(e) => updateData('guestInfo', { phone: e.target.value })}
+              onChange={handlePhoneChange}
+              pattern="[0-9]{9}"
+              title="Please enter exactly 9 digits"
+              maxLength={9}
               className="flex-1 px-4 py-3 text-sm border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
-              placeholder="+94 XXX XXX XXX"
+              placeholder="710 875 581"
             />
           </div>
         </div>
