@@ -28,8 +28,6 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-5 md:p-6">
-      <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-gray-800">Booking Details</h2>
-
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
