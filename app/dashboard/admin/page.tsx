@@ -44,7 +44,7 @@ const mockDashboardStats: DashboardStats = {
   revenue: 12500,
 };
 
-const Dashboard: React.FC = () => {
+export default function Dashboard() {
   const stats = mockDashboardStats;
 
   // Mock chart data
@@ -208,6 +208,4 @@ const Dashboard: React.FC = () => {
       </div>
     </AdminReceptionistLayout>
   );
-};
-
-export default Dashboard;
+}
