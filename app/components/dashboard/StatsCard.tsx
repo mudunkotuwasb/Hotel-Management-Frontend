@@ -10,6 +10,7 @@ interface StatsCardProps {
   bgColor?: string; // general background color for icon container
   textColor?: string; // general text color for icon
   subtitle?: string;
+  onClick?: () => void;
 }
 
 export default function StatsCard({
@@ -21,6 +22,7 @@ export default function StatsCard({
   bgColor = "bg-gray-400",
   textColor = "text-white",
   subtitle,
+  onClick, // <-- already defined
 }: StatsCardProps): React.ReactElement {
   const changeClasses = {
     positive: "text-green-700 bg-green-100",
@@ -40,7 +42,10 @@ export default function StatsCard({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4">
+    <div
+      onClick={onClick} // <-- added here
+      className={`bg-white rounded-lg shadow-sm p-4 cursor-pointer hover:shadow-md transition-shadow`}
+    >
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>

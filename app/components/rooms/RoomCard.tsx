@@ -76,7 +76,7 @@ interface RoomCardProps {
   booking?: Booking | null;
 }
 
-function RoomCard({
+export default function RoomCard({
   room,
   onEdit,
   onStatusChange,
@@ -365,5 +365,3 @@ function RoomCard({
     </div>
   );
 }
-
-export default RoomCard;
