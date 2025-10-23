@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Clock, Users, Bus, Edit2, Trash2 } from "lucide-react";
+import { Clock, Users, Bus, Edit2, Power, Trash2 } from "lucide-react";
 import AddPackageModal from "./AddPackageModal";
 
 interface Package {
@@ -126,6 +126,65 @@ export default function TripPackagesView() {
     setEditingPackage(null);
   };
 
+  const handleDeletePackage = async (packageId: number) => {
+    // Add delete API endpoint
+    /*
+    try {
+      const response = await fetch(`/api/trip-packages/${packageId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        // Remove from local state
+        setPackages(prev => prev.filter(pkg => pkg.id !== packageId));
+      } else {
+        console.error('Failed to delete package');
+      }
+    } catch (error) {
+      console.error('Error deleting package:', error);
+    }
+    */
+
+    // Temporary implementation until API is ready
+    console.log("Package to be deleted:", packageId);
+    setPackages(prev => prev.filter(pkg => pkg.id !== packageId));
+  };
+
+  const handleToggleStatus = async (pkg: Package) => {
+    const newStatus = pkg.status === "Active" ? "Inactive" : "Active";
+    
+    // Add status update API endpoint
+    /*
+    try {
+      const response = await fetch(`/api/trip-packages/${pkg.id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      
+      if (response.ok) {
+        const updated = await response.json();
+        // Update local state
+        setPackages(prev => prev.map(packageItem => 
+          packageItem.id === pkg.id ? { ...packageItem, status: newStatus } : packageItem
+        ));
+      } else {
+        console.error('Failed to update package status');
+      }
+    } catch (error) {
+      console.error('Error updating package status:', error);
+    }
+    */
+
+    // Temporary implementation until API is ready
+    console.log(`Package ${pkg.id} status to be updated to:`, newStatus);
+    setPackages(prev => prev.map(packageItem => 
+      packageItem.id === pkg.id ? { ...packageItem, status: newStatus } : packageItem
+    ));
+  };
+
   if (loading) {
     return (
       <div className="text-center text-black py-8">Loading packages...</div>
@@ -139,7 +198,7 @@ export default function TripPackagesView() {
         {packages.map((pkg) => (
           <div
             key={pkg.id}
-            className="bg-white rounded-2xl shadow-md p-4 md:p-6 hover:shadow-lg transition-shadow border border-gray-100"
+            className="bg-white rounded-2xl shadow-md p-4 md:p-6 hover:shadow-lg transition-shadow border border-black"
           >
             {/* Header */}
             <div className="flex justify-between items-start mb-3">
@@ -169,7 +228,11 @@ export default function TripPackagesView() {
                   </p>
                 </div>
               </div>
-              <span className="bg-green-100 text-green-700 text-xs font-medium px-2 md:px-3 py-1 rounded-full flex-shrink-0 ml-2">
+              <span className={`text-xs font-medium px-2 md:px-3 py-1 rounded-full flex-shrink-0 ml-2 ${
+                pkg.status === "Active" 
+                  ? "bg-green-100 text-green-700" 
+                  : "bg-gray-100 text-gray-700"
+              }`}>
                 {pkg.status}
               </span>
             </div>
@@ -202,23 +265,31 @@ export default function TripPackagesView() {
               ${pkg.price}
             </div>
 
-            {/* Buttons */}
-            <div className="flex items-center space-x-2 md:space-x-3">
+            {/* Buttons - Icons only with equal spacing */}
+            <div className="flex items-center justify-between">
               <button
-                className="flex items-center space-x-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors flex-1 justify-center"
+                className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
                 onClick={() => handleEditClick(pkg)}
               >
-                <Edit2 className="w-3 h-3 md:w-4 md:h-4" />
-                <span className="hidden xs:inline">Edit</span>
+                <Edit2 className="w-4 h-4 md:w-5 md:h-5" />
               </button>
 
-              <button className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg text-xs md:text-sm font-medium transition-colors flex-1 justify-center">
-                <span className="hidden sm:inline">Deactivate</span>
-                <span className="sm:hidden">Deact</span>
+              <button 
+                className={`p-2 rounded-lg transition-colors ${
+                  pkg.status === "Active" 
+                    ? "bg-orange-50 text-orange-600 hover:bg-orange-100" 
+                    : "bg-green-50 text-green-600 hover:bg-green-100"
+                }`}
+                onClick={() => handleToggleStatus(pkg)}
+              >
+                <Power className="w-4 h-4 md:w-5 md:h-5" />
               </button>
 
-              <button className="bg-red-600 hover:bg-red-700 text-white p-1.5 md:p-2 rounded-lg transition-colors flex-shrink-0">
-                <Trash2 className="w-3 h-3 md:w-4 md:h-4" />
+              <button 
+                className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                onClick={() => handleDeletePackage(pkg.id)}
+              >
+                <Trash2 className="w-4 h-4 md:w-5 md:h-5" />
               </button>
             </div>
           </div>

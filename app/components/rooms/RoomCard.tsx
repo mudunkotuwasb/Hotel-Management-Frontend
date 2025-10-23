@@ -136,15 +136,15 @@ function RoomCard({
   const getRoomTypeIcon = (type: Room["type"]) => {
     switch (type) {
       case "single":
-        return <Bed className="h-4 w-4" />;
+        return <Bed className="h-4 w-4 text-gray-900" />;
       case "double":
-        return <Users className="h-4 w-4" />;
+        return <Users className="h-4 w-4 text-gray-900" />;
       case "suite":
-        return <Bed className="h-4 w-4" />;
+        return <Bed className="h-4 w-4 text-gray-900" />;
       case "family":
-        return <Users className="h-4 w-4" />;
+        return <Users className="h-4 w-4 text-gray-900" />;
       default:
-        return <Bed className="h-4 w-4" />;
+        return <Bed className="h-4 w-4 text-gray-900" />;
     }
   };
 
@@ -167,11 +167,11 @@ function RoomCard({
   const StatusIcon = statusConfig.icon;
 
   return (
-    <div className={`room-card ${statusConfig.bg} group p-4 rounded-lg border`}>
+    <div className={`room-card ${statusConfig.bg} group p-4 rounded-lg border-2 border-gray-800 shadow-sm`}>
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <div className="p-3 bg-white rounded-xl shadow">
+          <div className="p-3 rounded-xl">
             {getRoomTypeIcon(room.type)}
           </div>
           <div>
@@ -273,73 +273,74 @@ function RoomCard({
       </div>
 
       {/* Actions */}
-      <div className="space-y-2">
-        {/* Primary Actions */}
-        <div className="flex space-x-2">
+      <div className="flex justify-between items-center space-x-2">
+        {/* Primary Action */}
+        <div className="flex-1 flex justify-center">
           {room.status === "available" && onCheckIn && (
             <button
               onClick={() => onCheckIn(room)}
-              className="flex-1 bg-green-600 text-white px-3 py-2 rounded-md text-sm hover:bg-green-700"
+              className="bg-green-100 text-green-600 p-2 rounded-lg hover:bg-green-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="Check In"
             >
-              <LogIn className="h-4 w-4 mr-1 inline" />
-              Check In
+              <LogIn className="h-4 w-4" />
             </button>
           )}
           {room.status === "occupied" && onCheckOut && (
             <button
               onClick={() => onCheckOut(room)}
-              className="flex-1 bg-yellow-500 text-white px-3 py-2 rounded-md text-sm hover:bg-yellow-600"
+              className="bg-yellow-100 text-yellow-600 p-2 rounded-lg hover:bg-yellow-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="Check Out"
             >
-              <LogOut className="h-4 w-4 mr-1 inline" />
-              Check Out
+              <LogOut className="h-4 w-4" />
             </button>
           )}
           {room.status === "cleaning" && onStatusChange && (
             <button
               onClick={() => onStatusChange(room.id, "available")}
-              className="flex-1 bg-green-600 text-white px-3 py-2 rounded-md text-sm hover:bg-green-700"
+              className="bg-green-100 text-green-600 p-2 rounded-lg hover:bg-green-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="Mark Clean"
             >
-              <CheckCircle className="h-4 w-4 mr-1 inline" />
-              Mark Clean
+              <CheckCircle className="h-4 w-4" />
             </button>
           )}
           {room.status === "available" && onStatusChange && (
             <button
               onClick={() => onStatusChange(room.id, "cleaning")}
-              className="flex-1 bg-yellow-500 text-white px-3 py-2 rounded-md text-sm hover:bg-yellow-600"
+              className="bg-yellow-100 text-yellow-600 p-2 rounded-lg hover:bg-yellow-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="Needs Cleaning"
             >
-              <AlertTriangle className="h-4 w-4 mr-1 inline" />
-              Needs Cleaning
+              <AlertTriangle className="h-4 w-4" />
             </button>
           )}
         </div>
 
         {/* Secondary Actions */}
-        <div className="flex space-x-2">
+        <div className="flex-1 flex justify-center space-x-2">
           {onView && (
             <button
               onClick={() => onView(room)}
-              className="flex-1 bg-gray-200 text-gray-700 px-3 py-2 rounded-md text-sm hover:bg-gray-300"
+              className="bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="View"
             >
-              <Eye className="h-4 w-4 mr-1 inline" />
-              View
+              <Eye className="h-4 w-4" />
             </button>
           )}
           {onEdit && (
             <button
               onClick={() => onEdit(room)}
-              className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md text-sm hover:bg-blue-700"
+              className="bg-purple-100 text-purple-600 p-2 rounded-lg hover:bg-purple-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="Edit"
             >
-              <Edit className="h-4 w-4 mr-1 inline" />
-              Edit
+              <Edit className="h-4 w-4" />
             </button>
           )}
           {onDelete && (
             <button
               onClick={() => onDelete(room)}
-              className="bg-red-600 text-white px-3 py-2 rounded-md text-sm hover:bg-red-700"
+              className="bg-red-100 text-red-600 p-2 rounded-lg hover:bg-red-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="Delete"
             >
-              <Trash2 className="h-4 w-4 inline" />
+              <Trash2 className="h-4 w-4" />
             </button>
           )}
         </div>
