@@ -76,7 +76,7 @@ interface RoomCardProps {
   booking?: Booking | null;
 }
 
-export default function RoomCard({
+function RoomCard({
   room,
   onEdit,
   onStatusChange,
@@ -88,7 +88,7 @@ export default function RoomCard({
   booking,
 }: RoomCardProps): React.ReactElement {
   
-// handleCheckIn Function
+  // handleCheckIn Function
   const handleCheckIn = async (room: Room) => {
     try {
       // Add API endpoint
@@ -382,11 +382,6 @@ export default function RoomCard({
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleStatusChange = (newStatus: Room["status"]) => {
-    setShowDropdown(false);
-    onStatusChange?.(room.id, newStatus);
-  };
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -448,7 +443,7 @@ export default function RoomCard({
               ].map((status) => (
                 <button
                   key={status}
-                  onClick={() => handleStatusChange(status as Room["status"])}
+                  onClick={() => handleStatusChange(room.id, status as Room["status"])}
                   className="block w-full text-left px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 capitalize"
                 >
                   {status}
