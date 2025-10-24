@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Bed,
   Users,
@@ -16,9 +16,10 @@ import {
   LogIn,
   LogOut,
   User,
+  ChevronDown,
 } from "lucide-react";
 
-// --- Type Definitions (self-contained) ---
+// --- Type Definitions ---
 export interface Room {
   id: string;
   number: string;
@@ -75,7 +76,7 @@ interface RoomCardProps {
   booking?: Booking | null;
 }
 
-function RoomCard({
+export default function RoomCard({
   room,
   onEdit,
   onStatusChange,
@@ -378,6 +379,35 @@ function RoomCard({
   const statusConfig = getStatusConfig(room.status);
   const StatusIcon = statusConfig.icon;
 
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleStatusChange = (newStatus: Room["status"]) => {
+    setShowDropdown(false);
+    onStatusChange?.(room.id, newStatus);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown]);
+
   return (
     <div className={`room-card ${statusConfig.bg} group p-4 rounded-lg border-2 border-gray-800 shadow-sm`}>
       {/* Header */}
@@ -395,54 +425,60 @@ function RoomCard({
             </p>
           </div>
         </div>
-        <div
-          className={`flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${statusConfig.color}`}
-        >
-          <StatusIcon className="h-3 w-3 mr-1" />
-          {statusConfig.text}
+
+        {/* Status Dropdown */}
+        <div className="relative" ref={dropdownRef}>
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            className={`flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${statusConfig.color} cursor-pointer`}
+          >
+            <StatusIcon className="h-3 w-3 mr-1" />
+            {statusConfig.text}
+            <ChevronDown className="ml-1 h-3 w-3" />
+          </button>
+
+          {showDropdown && (
+            <div className="absolute right-0 mt-1 w-32 bg-white border rounded-lg shadow-md z-10">
+              {[
+                "available",
+                "occupied",
+                "reserved",
+                "cleaning",
+                "maintenance",
+              ].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => handleStatusChange(status as Room["status"])}
+                  className="block w-full text-left px-3 py-1 text-sm text-gray-700 hover:bg-gray-100 capitalize"
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Guest Information */}
       {guest && room.status === "occupied" && (
-        <div className="mb-4 p-3 bg-white rounded-lg border border-gray-200">
+        <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
           <div className="flex items-center space-x-2 mb-2">
             <User className="h-4 w-4 text-gray-700" />
             <span className="text-sm font-semibold text-gray-900">
               Current Guest
             </span>
           </div>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-gray-600 space-y-0.5">
             <div className="font-medium">{guest.name}</div>
-            <div className="text-xs">{guest.email}</div>
+            <div className="text-xs px-1 py-0.5 bg-white rounded-full inline-block">
+              {guest.email}
+            </div>
             {booking && (
               <div className="text-xs mt-1">
                 Check-in: {new Date(booking.checkIn).toLocaleDateString()}
               </div>
             )}
           </div>
-        </div>
-      )}
-
-      {/* Cleaning Information */}
-      {room.needsCleaning && (
-        <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-          <div className="flex items-center space-x-2 mb-2">
-            <AlertTriangle className="h-4 w-4 text-yellow-600" />
-            <span className="text-sm font-semibold text-yellow-900">
-              Needs Cleaning
-            </span>
-          </div>
-          {room.cleaningNotes && (
-            <div className="text-sm text-yellow-700 mb-1">
-              {room.cleaningNotes}
-            </div>
-          )}
-          {room.lastCleaned && (
-            <div className="text-xs text-yellow-600">
-              Last cleaned: {new Date(room.lastCleaned).toLocaleDateString()}
-            </div>
-          )}
         </div>
       )}
 
@@ -470,14 +506,14 @@ function RoomCard({
           {room.amenities.slice(0, 3).map((amenity, index) => (
             <div
               key={index}
-              className="flex items-center space-x-1 text-xs text-gray-600 bg-white px-2 py-1 rounded-lg border border-gray-200"
+              className="flex items-center space-x-1 text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-full"
             >
               {getAmenityIcon(amenity)}
               <span>{amenity}</span>
             </div>
           ))}
           {room.amenities.length > 3 && (
-            <div className="text-xs text-gray-500 bg-white px-2 py-1 rounded-lg border border-gray-200">
+            <div className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
               +{room.amenities.length - 3} more
             </div>
           )}

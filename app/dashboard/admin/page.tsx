@@ -1,22 +1,13 @@
 "use client";
 
-import React from "react";
-import {
-  Bed,
-  Users,
-  Utensils,
-  Package,
-  TrendingUp,
-  AlertTriangle,
-  Clock,
-  CheckCircle,
-  Plus,
-} from "lucide-react";
+import React, { useState } from "react";
+import { Bed, Users, Utensils, CheckCircle } from "lucide-react";
 import AdminReceptionistLayout from "../../components/layout/AdminReceptionistLayout";
 import StatsCard from "../../components/dashboard/StatsCard";
 import ChartCard from "../../components/dashboard/ChartCard";
 import RecentActivity from "../../components/dashboard/RecentActivity";
 import QuickActions from "../../components/dashboard/QuickActions";
+import RoomCard, { Room } from "../../components/rooms/RoomCard";
 
 interface DashboardStats {
   totalRooms: number;
@@ -33,7 +24,7 @@ interface DashboardStats {
 
 const mockDashboardStats: DashboardStats = {
   totalRooms: 20,
-  availableRooms: 12,
+  availableRooms: 2,
   occupiedRooms: 5,
   cleaningRooms: 2,
   todayCheckIns: 3,
@@ -44,8 +35,54 @@ const mockDashboardStats: DashboardStats = {
   revenue: 12500,
 };
 
+// --- Mock rooms data ---
+const mockRooms: Room[] = [
+  {
+    id: "1",
+    number: "101",
+    type: "single",
+    status: "available",
+    rate: 100,
+    amenities: ["wifi", "tv"],
+    maxOccupancy: 1,
+    floor: 1,
+  },
+  {
+    id: "2",
+    number: "102",
+    type: "double",
+    status: "occupied",
+    rate: 150,
+    amenities: ["wifi", "tv", "ac"],
+    maxOccupancy: 2,
+    floor: 1,
+  },
+  {
+    id: "3",
+    number: "103",
+    type: "suite",
+    status: "available",
+    rate: 250,
+    amenities: ["wifi", "tv", "ac", "mini bar"],
+    maxOccupancy: 4,
+    floor: 2,
+  },
+  {
+    id: "4",
+    number: "104",
+    type: "family",
+    status: "reserved",
+    rate: 200,
+    amenities: ["wifi", "tv"],
+    maxOccupancy: 4,
+    floor: 2,
+  },
+  // add more rooms if needed
+];
+
 export default function Dashboard() {
   const stats = mockDashboardStats;
+  const [filteredRooms, setFilteredRooms] = useState<Room[] | null>(null);
 
   // Mock chart data
   const occupancyData = [
@@ -74,6 +111,24 @@ export default function Dashboard() {
     { name: "Jun", value: 22000 },
   ];
 
+  // Handler to change status
+  const handleStatusChange = (roomId: string, status: Room["status"]) => {
+    setFilteredRooms((prev) =>
+      prev
+        ? prev
+            .map((room) =>
+              room.id === roomId
+                ? {
+                    ...room,
+                    status,
+                  }
+                : room
+            )
+            .filter((room) => room.status === "available") // remove if not available
+        : null
+    );
+  };
+
   return (
     <AdminReceptionistLayout role="admin">
       <div className="space-y-8 animate-fade-in">
@@ -97,14 +152,6 @@ export default function Dashboard() {
         {/* Key Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard
-            title="Total Rooms"
-            value={stats.totalRooms}
-            subtitle="Hotel capacity"
-            icon={Bed}
-            bgColor="bg-gray-500"
-            textColor="text-white"
-          />
-          <StatsCard
             title="Available Rooms"
             value={stats.availableRooms}
             subtitle={`${stats.occupancyRate}% occupied`}
@@ -113,13 +160,29 @@ export default function Dashboard() {
             icon={CheckCircle}
             bgColor="bg-green-500"
             textColor="text-white"
+            onClick={() =>
+              setFilteredRooms((prev) =>
+                prev
+                  ? null
+                  : mockRooms.filter((room) => room.status === "available")
+              )
+            }
           />
+
           <StatsCard
             title="Today's Check-ins"
             value={stats.todayCheckIns}
             subtitle="Guests arriving"
             icon={Users}
             bgColor="bg-yellow-500"
+            textColor="text-white"
+          />
+          <StatsCard
+            title="Today's Check-outs"
+            value={stats.todayCheckOuts}
+            subtitle="Guests leaving"
+            icon={Users}
+            bgColor="bg-red-500"
             textColor="text-white"
           />
           <StatsCard
@@ -134,43 +197,29 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Status Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatsCard
-            title="Occupied Rooms"
-            value={stats.occupiedRooms}
-            subtitle="Currently in use"
-            icon={Bed}
-            bgColor="bg-red-500"
-            textColor="text-white"
-          />
-          <StatsCard
-            title="Needs Cleaning"
-            value={stats.cleaningRooms}
-            subtitle="Housekeeping tasks"
-            icon={AlertTriangle}
-            bgColor="bg-yellow-500"
-            textColor="text-white"
-          />
-          <StatsCard
-            title="Low Stock Alert"
-            value={stats.lowStockItems}
-            subtitle="Items to reorder"
-            icon={Package}
-            bgColor="bg-red-500"
-            textColor="text-white"
-          />
-          <StatsCard
-            title="Monthly Revenue"
-            value={`$${stats.revenue.toLocaleString()}`}
-            subtitle="This month"
-            change="+12% from last month"
-            changeType="positive"
-            icon={TrendingUp}
-            bgColor="bg-green-500"
-            textColor="text-white"
-          />
-        </div>
+        {/* Show Filtered Rooms on Click */}
+        {filteredRooms && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Available Rooms</h2>
+              <button
+                className="text-sm text-gray-600 hover:underline"
+                onClick={() => setFilteredRooms(null)}
+              >
+                Clear Filter
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredRooms.map((room) => (
+                <RoomCard
+                  key={room.id}
+                  room={room}
+                  onStatusChange={handleStatusChange}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Charts and Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

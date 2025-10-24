@@ -1,5 +1,6 @@
 import React from "react";
 import RoomCard from "./RoomCard";
+import { Edit, Eye, Trash2 } from "lucide-react";
 
 type RoomStatus =
   | "available"
@@ -264,18 +265,21 @@ export default function RoomsList({
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {room.floor}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                <button
-                  onClick={() => onEdit(room)}
-                  className="text-blue-600 hover:text-blue-800"
-                >
-                  Edit
-                </button>
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center gap-2">
                 <button
                   onClick={() => onView(room)}
-                  className="text-indigo-600 hover:text-indigo-800"
+                  className="p-2 rounded-md hover:bg-gray-100"
+                  title="View Room"
                 >
-                  View
+                  <Eye className="h-5 w-5 text-indigo-600" />
+                </button>
+
+                <button
+                  onClick={() => onEdit(room)}
+                  className="p-2 rounded-md hover:bg-gray-100"
+                  title="Edit Room"
+                >
+                  <Edit className="h-5 w-5 text-blue-600" />
                 </button>
                 {room.status === "cleaning" && (
                   <button
@@ -289,7 +293,7 @@ export default function RoomsList({
                   onClick={() => handleDelete(room)}
                   className="text-red-600 hover:text-red-800"
                 >
-                  Delete
+                  <Trash2 className="h-5 w-5 text-red-600" />
                 </button>
               </td>
             </tr>
