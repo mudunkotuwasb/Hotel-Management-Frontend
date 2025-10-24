@@ -45,7 +45,7 @@ export default function NewBookingModal({
         children: 0,
         rooms: 1,
         roomType: "Deluxe",
-        roomNo: ["Room 101"], // Changed to array to support multiple rooms
+        roomNo: ["Room 101"],
         bedPreference: "Double",
         mealPlan: "Bed & Breakfast",
         specialRequest: "Near pool"
@@ -60,7 +60,7 @@ export default function NewBookingModal({
     useEffect(() => {
         if (editingBooking) {
             // In a real app, you would fetch the guest details using editingBooking.guestId
-            // For now, using mock guest data
+            // using mock guest data
             const mockGuest = {
                 firstName: "Lahiru",
                 lastName: "Ellepola",
