@@ -87,6 +87,218 @@ export default function RoomCard({
   guest,
   booking,
 }: RoomCardProps): React.ReactElement {
+  
+// handleCheckIn Function
+  const handleCheckIn = async (room: Room) => {
+    try {
+      // Add API endpoint
+      const endpoint = "/api/rooms/checkin";
+      
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          roomId: room.id,
+          roomNumber: room.number,
+          guestId: guest?.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Check-in successful:", result);
+
+      if (onCheckIn) {
+        onCheckIn(room);
+      }
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to check in:", error);
+      alert("Failed to check in. Please try again.");
+    }
+  };
+
+
+  // handleCheckOut Function
+  const handleCheckOut = async (room: Room) => {
+    try {
+      // Add API endpoint
+      const endpoint = "/api/rooms/checkout";
+      
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          roomId: room.id,
+          roomNumber: room.number,
+          guestId: guest?.id,
+          bookingId: booking?.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Check-out successful:", result);
+
+      if (onCheckOut) {
+        onCheckOut(room);
+      }
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to check out:", error);
+      alert("Failed to check out. Please try again.");
+    }
+  };
+
+
+  // handleStatusChange Function
+  const handleStatusChange = async (roomId: string, status: Room["status"]) => {
+    try {
+      // ADD API endpoint
+      const endpoint = "/api/rooms/status";
+      
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          roomId,
+          status,
+          ...(status === "cleaning" && { cleaningNotes: "Marked for cleaning" }),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Room status updated successfully:", result);
+
+      if (onStatusChange) {
+        onStatusChange(roomId, status);
+      }
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to update room status:", error);
+      alert("Failed to update room status. Please try again.");
+    }
+  };
+
+  // handleDelete Function
+  const handleDelete = async (room: Room) => {
+    if (!confirm(`Are you sure you want to delete Room ${room.number}?`)) {
+      return;
+    }
+
+    try {
+      // Add API endpoint
+      const endpoint = `/api/rooms/delete/${room.id}`;
+      
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Room deleted successfully:", result);
+
+      if (onDelete) {
+        onDelete(room);
+      }
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to delete room:", error);
+      alert("Failed to delete room. Please try again.");
+    }
+  };
+
+
+  // handleView Function
+  const handleView = async (room: Room) => {
+    try {
+      // Add API endpoint
+      const endpoint = `/api/rooms/${room.id}`;
+      
+      const response = await fetch(endpoint, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const roomDetails = await response.json();
+      console.log("Room details fetched:", roomDetails);
+
+      if (onView) {
+        onView(room);
+      }
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to fetch room details:", error);
+      alert("Failed to load room details. Please try again.");
+    }
+  };
+
+
+  // handleEdit Function
+  const handleEdit = async (room: Room) => {
+    try {
+      // Add API endpoint
+      const endpoint = `/api/rooms/${room.id}/edit`;
+      
+      const response = await fetch(endpoint, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const roomData = await response.json();
+      console.log("Room data for editing:", roomData);
+
+      if (onEdit) {
+        onEdit(room);
+      }
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to fetch room data for editing:", error);
+      alert("Failed to load room data. Please try again.");
+    }
+  };
+
   const getStatusConfig = (status: Room["status"]) => {
     switch (status) {
       case "available":
@@ -137,15 +349,15 @@ export default function RoomCard({
   const getRoomTypeIcon = (type: Room["type"]) => {
     switch (type) {
       case "single":
-        return <Bed className="h-5 w-5" />;
+        return <Bed className="h-4 w-4 text-gray-900" />;
       case "double":
-        return <Users className="h-5 w-5" />;
+        return <Users className="h-4 w-4 text-gray-900" />;
       case "suite":
-        return <Bed className="h-5 w-5" />;
+        return <Bed className="h-4 w-4 text-gray-900" />;
       case "family":
-        return <Users className="h-5 w-5" />;
+        return <Users className="h-4 w-4 text-gray-900" />;
       default:
-        return <Bed className="h-5 w-5" />;
+        return <Bed className="h-4 w-4 text-gray-900" />;
     }
   };
 
@@ -197,13 +409,11 @@ export default function RoomCard({
   }, [showDropdown]);
 
   return (
-    <div
-      className={`room-card ${statusConfig.bg} p-5 rounded-lg border shadow-sm hover:shadow-md transition-shadow`}
-    >
+    <div className={`room-card ${statusConfig.bg} group p-4 rounded-lg border-2 border-gray-800 shadow-sm`}>
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <div className="p-3 bg-gray-50 rounded-full flex items-center justify-center shadow-sm">
+          <div className="p-3 rounded-xl">
             {getRoomTypeIcon(room.type)}
           </div>
           <div>
@@ -311,53 +521,74 @@ export default function RoomCard({
       </div>
 
       {/* Actions */}
-      <div className="flex justify-between items-center mt-4 pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-2">
+      <div className="flex justify-between items-center space-x-2">
+        {/* Primary Action */}
+        <div className="flex-1 flex justify-center">
           {room.status === "available" && onCheckIn && (
             <button
-              onClick={() => onCheckIn(room)}
+              onClick={() => handleCheckIn(room)}
+              className="bg-green-100 text-green-600 p-2 rounded-lg hover:bg-green-200 transition-colors flex-1 max-w-[50px] flex justify-center"
               title="Check In"
-              className="p-2 rounded-md hover:bg-gray-100"
             >
-              <LogIn className="h-5 w-5 text-green-600" />
+              <LogIn className="h-4 w-4" />
             </button>
           )}
           {room.status === "occupied" && onCheckOut && (
             <button
-              onClick={() => onCheckOut(room)}
+              onClick={() => handleCheckOut(room)}
+              className="bg-yellow-100 text-yellow-600 p-2 rounded-lg hover:bg-yellow-200 transition-colors flex-1 max-w-[50px] flex justify-center"
               title="Check Out"
-              className="p-2 rounded-md hover:bg-gray-100"
             >
-              <LogOut className="h-5 w-5 text-yellow-600" />
+              <LogOut className="h-4 w-4" />
+            </button>
+          )}
+          {room.status === "cleaning" && onStatusChange && (
+            <button
+              onClick={() => handleStatusChange(room.id, "available")}
+              className="bg-green-100 text-green-600 p-2 rounded-lg hover:bg-green-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="Mark Clean"
+            >
+              <CheckCircle className="h-4 w-4" />
+            </button>
+          )}
+          {room.status === "available" && onStatusChange && (
+            <button
+              onClick={() => handleStatusChange(room.id, "cleaning")}
+              className="bg-yellow-100 text-yellow-600 p-2 rounded-lg hover:bg-yellow-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="Needs Cleaning"
+            >
+              <AlertTriangle className="h-4 w-4" />
             </button>
           )}
         </div>
-        <div className="flex items-center gap-2">
+
+        {/* Secondary Actions */}
+        <div className="flex-1 flex justify-center space-x-2">
           {onView && (
             <button
-              onClick={() => onView(room)}
-              title="View Room"
-              className="p-2 rounded-md hover:bg-gray-100"
+              onClick={() => handleView(room)}
+              className="bg-blue-100 text-blue-600 p-2 rounded-lg hover:bg-blue-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="View"
             >
-              <Eye className="h-5 w-5 text-gray-700" />
+              <Eye className="h-4 w-4" />
             </button>
           )}
           {onEdit && (
             <button
-              onClick={() => onEdit(room)}
-              title="Edit Room"
-              className="p-2 rounded-md hover:bg-gray-100"
+              onClick={() => handleEdit(room)}
+              className="bg-purple-100 text-purple-600 p-2 rounded-lg hover:bg-purple-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="Edit"
             >
-              <Edit className="h-5 w-5 text-blue-600" />
+              <Edit className="h-4 w-4" />
             </button>
           )}
           {onDelete && (
             <button
-              onClick={() => onDelete(room)}
-              title="Delete Room"
-              className="p-2 rounded-md hover:bg-gray-100"
+              onClick={() => handleDelete(room)}
+              className="bg-red-100 text-red-600 p-2 rounded-lg hover:bg-red-200 transition-colors flex-1 max-w-[50px] flex justify-center"
+              title="Delete"
             >
-              <Trash2 className="h-5 w-5 text-red-600" />
+              <Trash2 className="h-4 w-4" />
             </button>
           )}
         </div>
@@ -365,3 +596,5 @@ export default function RoomCard({
     </div>
   );
 }
+
+export default RoomCard;

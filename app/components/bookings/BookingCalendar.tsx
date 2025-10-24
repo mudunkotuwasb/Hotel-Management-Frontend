@@ -70,6 +70,12 @@ export default function BookingCalendar({
            currentYear === today.getFullYear();
   };
 
+  // Check if we are viewing the current month
+  const isViewingCurrentMonth = () => {
+    const today = new Date();
+    return currentMonth === today.getMonth() && currentYear === today.getFullYear();
+  };
+
   const getBookingsForDate = (day: number) => {
     const targetDate = new Date(currentYear, currentMonth, day);
     return bookings.filter(booking => {
@@ -189,19 +195,21 @@ export default function BookingCalendar({
         <div className="flex items-center space-x-2">
           <button
             onClick={goToPreviousMonth}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-900"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <button
-            onClick={goToToday}
-            className="px-3 py-1 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            Today
-          </button>
+          {!isViewingCurrentMonth() && (
+            <button
+              onClick={goToToday}
+              className="px-3 py-1 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Today
+            </button>
+          )}
           <button
             onClick={goToNextMonth}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-900"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

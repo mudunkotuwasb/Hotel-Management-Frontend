@@ -43,6 +43,142 @@ export default function RoomsList({
   onCheckOut,
   onDelete,
 }: RoomsListProps): React.ReactElement {
+  
+
+  // handleStatusChange Function
+  const handleStatusChange = async (roomId: string, status: RoomStatus) => {
+    try {
+      // Add API endpoint
+      const endpoint = "Add API endpoint here";
+      
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          roomId,
+          status,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Room status updated successfully:", result);
+
+      onStatusChange(roomId, status);
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to update room status:", error);
+      alert("Failed to update room status. Please try again.");
+    }
+  };
+
+  // handleCheckIn Function
+  const handleCheckIn = async (room: Room) => {
+    try {
+      // Add API endpoint
+      const endpoint = "Add API endpoint here";
+      
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          roomId: room.id,
+          roomNumber: room.number,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Check-in successful:", result);
+
+      onCheckIn(room);
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to check in:", error);
+      alert("Failed to check in. Please try again.");
+    }
+  };
+
+  // handleCheckOut Function
+  const handleCheckOut = async (room: Room) => {
+    try {
+      // Add API endpoint
+      const endpoint = "Add API endpoint here";
+      
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          roomId: room.id,
+          roomNumber: room.number,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Check-out successful:", result);
+
+      onCheckOut(room);
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to check out:", error);
+      alert("Failed to check out. Please try again.");
+    }
+  };
+
+  // handleDelete Function
+  const handleDelete = async (room: Room) => {
+    if (!confirm(`Are you sure you want to delete Room ${room.number}?`)) {
+      return;
+    }
+
+    try {
+      // Add API endpoint
+      const endpoint = `Add API endpoint here${room.id}`;
+      
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Room deleted successfully:", result);
+
+      onDelete(room);
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to delete room:", error);
+      alert("Failed to delete room. Please try again.");
+    }
+  };
+
   if (rooms.length === 0)
     return (
       <div className="text-center py-12 text-gray-600">
@@ -62,10 +198,10 @@ export default function RoomsList({
             room={room}
             onEdit={onEdit}
             onView={onView}
-            onStatusChange={onStatusChange}
-            onCheckIn={onCheckIn}
-            onCheckOut={onCheckOut}
-            onDelete={onDelete}
+            onStatusChange={handleStatusChange}
+            onCheckIn={handleCheckIn}
+            onCheckOut={handleCheckOut}
+            onDelete={handleDelete}
           />
         ))}
       </div>
@@ -145,11 +281,17 @@ export default function RoomsList({
                 >
                   <Edit className="h-5 w-5 text-blue-600" />
                 </button>
-
+                {room.status === "cleaning" && (
+                  <button
+                    onClick={() => handleStatusChange(room.id, "available")}
+                    className="text-green-600 hover:text-green-800"
+                  >
+                    Mark Clean
+                  </button>
+                )}
                 <button
-                  onClick={() => onDelete(room)}
-                  className="p-2 rounded-md hover:bg-gray-100"
-                  title="Delete Room"
+                  onClick={() => handleDelete(room)}
+                  className="text-red-600 hover:text-red-800"
                 >
                   <Trash2 className="h-5 w-5 text-red-600" />
                 </button>

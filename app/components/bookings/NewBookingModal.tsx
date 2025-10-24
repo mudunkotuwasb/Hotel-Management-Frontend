@@ -45,7 +45,7 @@ export default function NewBookingModal({
         children: 0,
         rooms: 1,
         roomType: "Deluxe",
-        roomNo: "Room 101",
+        roomNo: ["Room 101"],
         bedPreference: "Double",
         mealPlan: "Bed & Breakfast",
         specialRequest: "Near pool"
@@ -54,11 +54,13 @@ export default function NewBookingModal({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
 
+    const availableRooms = ["Room 101", "Room 102", "Room 103", "Room 104", "Room 105", "Room 201", "Room 202", "Room 203"];
+
     // Initialize form with editing booking data
     useEffect(() => {
         if (editingBooking) {
             // In a real app, you would fetch the guest details using editingBooking.guestId
-            // For now, using mock guest data
+            // using mock guest data
             const mockGuest = {
                 firstName: "Lahiru",
                 lastName: "Ellepola",
@@ -77,7 +79,7 @@ export default function NewBookingModal({
                 children: 0,
                 rooms: 1,
                 roomType: "Deluxe", // Map from roomId or add roomType to Booking interface
-                roomNo: editingBooking.roomId,
+                roomNo: [editingBooking.roomId], // Initialize with single room as array
                 bedPreference: "Double", // Add this to Booking interface if needed
                 mealPlan: editingBooking.package === 'room-only' ? 'Room Only' : 
                          editingBooking.package === 'bed-breakfast' ? 'Bed & Breakfast' :
@@ -97,7 +99,7 @@ export default function NewBookingModal({
                 children: 0,
                 rooms: 1,
                 roomType: "Deluxe",
-                roomNo: "Room 101",
+                roomNo: ["Room 101"],
                 bedPreference: "Double",
                 mealPlan: "Bed & Breakfast",
                 specialRequest: "Near pool"
@@ -106,10 +108,46 @@ export default function NewBookingModal({
     }, [editingBooking]);
 
     const updateCounter = (field: 'adults' | 'children' | 'rooms', increment: boolean) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: Math.max(0, prev[field] + (increment ? 1 : -1))
-        }));
+        setFormData(prev => {
+            const newValue = Math.max(0, prev[field] + (increment ? 1 : -1));
+            
+            // If rooms count changes, adjust the roomNo array
+            if (field === 'rooms') {
+                const currentRooms = prev.roomNo;
+                let newRooms = [...currentRooms];
+                
+                if (increment && newValue > currentRooms.length) {
+                    const availableRoom = availableRooms.find(room => !currentRooms.includes(room));
+                    if (availableRoom) {
+                        newRooms.push(availableRoom);
+                    }
+                } else if (!increment && newValue < currentRooms.length) {
+                    newRooms = newRooms.slice(0, newValue);
+                }
+                
+                return {
+                    ...prev,
+                    [field]: newValue,
+                    roomNo: newRooms
+                };
+            }
+            
+            return {
+                ...prev,
+                [field]: newValue
+            };
+        });
+    };
+
+    const handleRoomSelection = (room: string, index: number) => {
+        setFormData(prev => {
+            const newRoomNo = [...prev.roomNo];
+            newRoomNo[index] = room;
+            return {
+                ...prev,
+                roomNo: newRoomNo
+            };
+        });
     };
 
     const handleInputChange = (field: string, value: string) => {
@@ -166,11 +204,11 @@ export default function NewBookingModal({
                     mealPlan: formData.mealPlan,
                     specialRequest: formData.specialRequest,
                     status: "confirmed",
-                    totalAmount: 141.00
+                    totalAmount: 141.00 * formData.rooms
                 }
             };
 
-            // COMMENTED OUT UNTIL API IS AVAILABLE
+            // Add API endpoin
             /*
             const response = await fetch(API_URL, {
                 method: "POST",
@@ -233,7 +271,7 @@ export default function NewBookingModal({
                     mealPlan: formData.mealPlan,
                     specialRequest: formData.specialRequest,
                     status: editingBooking.status,
-                    totalAmount: editingBooking.totalAmount
+                    totalAmount: editingBooking.totalAmount * formData.rooms
                 }
             };
 
@@ -263,7 +301,7 @@ export default function NewBookingModal({
                     ...editingBooking,
                     checkIn: formData.checkIn,
                     checkOut: formData.checkOut,
-                    roomId: formData.roomNo.replace('Room ', ''),
+                    roomId: formData.roomNo[0].replace('Room ', ''),
                     package: formData.mealPlan === 'Room Only' ? 'room-only' :
                             formData.mealPlan === 'Bed & Breakfast' ? 'bed-breakfast' :
                             formData.mealPlan === 'Half Board' ? 'half-board' : 'full-board'
@@ -294,8 +332,13 @@ export default function NewBookingModal({
             return;
         }
 
-        if (!formData.roomType || !formData.roomNo) {
-            setSubmitError("Please select room type and room number");
+        if (!formData.roomType) {
+            setSubmitError("Please select room type");
+            return;
+        }
+
+        if (formData.roomNo.length !== formData.rooms) {
+            setSubmitError("Please select all required rooms");
             return;
         }
 
@@ -511,19 +554,31 @@ export default function NewBookingModal({
                                         </div>
                                     </div>
 
+                                    {/* Room Selection - Multiple Rooms */}
                                     <div>
                                         <label className="block text-xs font-medium text-gray-900 mb-1">
                                             Room No *
                                         </label>
-                                        <select
-                                            value={formData.roomNo}
-                                            onChange={(e) => handleInputChange('roomNo', e.target.value)}
-                                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-900"
-                                        >
-                                            <option>Room 101</option>
-                                            <option>Room 102</option>
-                                            <option>Room 103</option>
-                                        </select>
+                                        <div className="space-y-2">
+                                            {Array.from({ length: formData.rooms }).map((_, index) => (
+                                                <select
+                                                    key={index}
+                                                    value={formData.roomNo[index] || ""}
+                                                    onChange={(e) => handleRoomSelection(e.target.value, index)}
+                                                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-900"
+                                                >
+                                                    <option value="">Select Room {index + 1}</option>
+                                                    {availableRooms
+                                                        .filter(room => !formData.roomNo.includes(room) || room === formData.roomNo[index])
+                                                        .map(room => (
+                                                            <option key={room} value={room}>
+                                                                {room}
+                                                            </option>
+                                                        ))
+                                                    }
+                                                </select>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -628,7 +683,7 @@ export default function NewBookingModal({
                                         <span className="font-medium">Number of Rooms:</span> {formData.rooms}
                                     </p>
                                     <p className="text-gray-900">
-                                        <span className="font-medium">Room No:</span> {formData.roomNo}
+                                        <span className="font-medium">Rooms:</span> {formData.roomNo.join(', ')}
                                     </p>
                                 </div>
                             </div>
@@ -654,11 +709,11 @@ export default function NewBookingModal({
                                 <div className="space-y-1 text-xs">
                                     <div className="flex justify-between">
                                         <span className="text-gray-900">Sub Total:</span>
-                                        <span className="text-gray-900">$128.50</span>
+                                        <span className="text-gray-900">${(128.50 * formData.rooms).toFixed(2)}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-900">Service Fee:</span>
-                                        <span className="text-gray-900">$12.50</span>
+                                        <span className="text-gray-900">${(12.50 * formData.rooms).toFixed(2)}</span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-900">Discount:</span>
@@ -666,7 +721,7 @@ export default function NewBookingModal({
                                     </div>
                                     <div className="flex justify-between font-bold text-sm border-t border-gray-300 pt-2">
                                         <span className="text-gray-900">Total:</span>
-                                        <span className="text-gray-900">$141.00</span>
+                                        <span className="text-gray-900">${(141.00 * formData.rooms).toFixed(2)}</span>
                                     </div>
                                 </div>
                             </div>

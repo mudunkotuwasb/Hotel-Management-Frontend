@@ -34,6 +34,52 @@ export default function ItemForm({
   onClose,
   onSave,
 }: ItemFormProps) {
+  
+  // API calls
+  const handleSave = async () => {
+    // Validate form before proceeding
+    if (Object.keys(formErrors).length > 0) {
+      return;
+    }
+
+    try {
+      // Replace API endpoint
+      const endpoint = editingItem 
+        ? "/api/inventory/update"  // Add endpoint for editing
+        : "/api/inventory/add";    // Add Update endpoint for adding
+
+      const response = await fetch(endpoint, {
+        method: editingItem ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...newItem,
+          currentStock: Number(newItem.currentStock),
+          minStock: Number(newItem.minStock),
+          maxStock: Number(newItem.maxStock),
+          cost: Number(newItem.cost),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      // Handle successful response
+      const result = await response.json();
+      console.log("Item saved successfully:", result);
+
+      // Call the existing onSave prop to handle UI state updates
+      onSave();
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to save item:", error);
+      alert("Failed to save item. Please try again.");
+    }
+  };
+
   return (
     <div className="card bg-white rounded-lg shadow-lg p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
@@ -213,7 +259,7 @@ export default function ItemForm({
         {/* Save Button */}
         <div className="flex items-end">
           <button
-            onClick={onSave}
+            onClick={handleSave}
             disabled={!!Object.keys(formErrors).length}
             className={`btn btn-primary w-full justify-center flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition group ${
               Object.keys(formErrors).length

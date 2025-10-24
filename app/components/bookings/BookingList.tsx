@@ -38,6 +38,151 @@ export default function BookingList({
   onCheckOut,
   onCancel
 }: BookingListProps) {
+  
+  // handleCheckIn Function
+  const handleCheckIn = async (booking: Booking) => {
+    try {
+      // Add API endpoint
+      const endpoint = "/api/bookings/checkin";
+      
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId: booking.id,
+          guestId: booking.guestId,
+          roomId: booking.roomId,
+          checkIn: booking.checkIn,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Check-in successful:", result);
+
+      if (onCheckIn) {
+        onCheckIn(booking);
+      }
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to check in:", error);
+      alert("Failed to check in. Please try again.");
+    }
+  };
+
+  // handleCheckOut Function
+  const handleCheckOut = async (booking: Booking) => {
+    try {
+      // Add API endpoint
+      const endpoint = "/api/bookings/checkout";
+      
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId: booking.id,
+          guestId: booking.guestId,
+          roomId: booking.roomId,
+          checkOut: booking.checkOut,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Check-out successful:", result);
+
+      if (onCheckOut) {
+        onCheckOut(booking);
+      }
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to check out:", error);
+      alert("Failed to check out. Please try again.");
+    }
+  };
+
+  // handleEdit Function
+  const handleEdit = async (booking: Booking) => {
+    try {
+      // Add API endpoint
+      const endpoint = `/api/bookings/${booking.id}/edit`;
+      
+      const response = await fetch(endpoint, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const bookingData = await response.json();
+      console.log("Booking data for editing:", bookingData);
+
+      if (onEdit) {
+        onEdit(booking);
+      }
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to fetch booking data for editing:", error);
+      alert("Failed to load booking data. Please try again.");
+    }
+  };
+
+  // handleCancel Function
+  const handleCancel = async (booking: Booking) => {
+    if (!confirm(`Are you sure you want to cancel booking #${booking.id}?`)) {
+      return;
+    }
+
+    try {
+      // Add API endpoint
+      const endpoint = `/api/bookings/cancel/${booking.id}`;
+      
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId: booking.id,
+          reason: "Cancelled by staff",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Booking cancelled successfully:", result);
+
+      if (onCancel) {
+        onCancel(booking);
+      }
+
+    } catch (error) {
+      // Handle API error (show toast, alert)
+      console.error("Failed to cancel booking:", error);
+      alert("Failed to cancel booking. Please try again.");
+    }
+  };
+
   const getGuestName = (guestId: string) => {
     const guest = guests.find(g => g.id === guestId);
     return guest ? guest.name : 'Unknown Guest';
@@ -207,19 +352,19 @@ export default function BookingList({
                     {booking.status === 'confirmed' && (
                       <>
                         <button
-                          onClick={() => onCheckIn?.(booking)}
+                          onClick={() => handleCheckIn(booking)}
                           className="text-green-600 hover:text-green-900"
                         >
                           Check-in
                         </button>
                         <button
-                          onClick={() => onEdit?.(booking)}
+                          onClick={() => handleEdit(booking)}
                           className="text-blue-600 hover:text-blue-900"
                         >
                           Edit
                         </button>
                         <button
-                          onClick={() => onCancel?.(booking)}
+                          onClick={() => handleCancel(booking)}
                           className="text-red-600 hover:text-red-900"
                         >
                           Cancel
@@ -228,7 +373,7 @@ export default function BookingList({
                     )}
                     {booking.status === 'checked-in' && (
                       <button
-                        onClick={() => onCheckOut?.(booking)}
+                        onClick={() => handleCheckOut(booking)}
                         className="text-orange-600 hover:text-orange-900"
                       >
                         Check-out
