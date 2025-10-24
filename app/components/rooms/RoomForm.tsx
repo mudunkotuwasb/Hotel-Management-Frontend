@@ -52,6 +52,52 @@ export default function RoomForm({
   onClose,
   onSave,
 }: RoomFormProps) {
+  
+
+  const handleSave = async () => {
+    // Validate form before proceeding
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
+
+    try {
+      // Add API endpoints
+      const endpoint = editingRoom 
+        ? "/api/rooms/update"  // Add endpoint for updating
+        : "/api/rooms/add";    // Add endpoint for adding
+
+      // Replace with your actual API call
+      const response = await fetch(endpoint, {
+        method: editingRoom ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...newRoom,
+          rate: Number(newRoom.rate),
+          floor: Number(newRoom.floor),
+          maxOccupancy: Number(newRoom.maxOccupancy),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      // Handle successful response
+      const result = await response.json();
+      console.log("Room saved successfully:", result);
+
+      // Call the existing onSave prop to handle UI state updates
+      onSave();
+
+    } catch (error) {
+      // Handle API error (show toast, alert, etc.)
+      console.error("Failed to save room:", error);
+      alert("Failed to save room. Please try again.");
+    }
+  };
+
   return (
     <div className="card bg-white rounded-lg shadow-lg p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
@@ -211,7 +257,7 @@ export default function RoomForm({
                   }}
                   className="mr-2"
                 />
-                <span className="text-sm">{amenity}</span>
+                <span className="text-sm text-black">{amenity}</span>
               </label>
             ))}
           </div>
@@ -220,7 +266,7 @@ export default function RoomForm({
         {/* Add/Update Button */}
         <div className="flex items-end">
           <button
-            onClick={onSave}
+            onClick={handleSave}
             disabled={!!Object.keys(errors).length}
             className={`btn btn-primary w-full justify-center flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition group ${
               Object.keys(errors).length ? "opacity-50 cursor-not-allowed" : ""

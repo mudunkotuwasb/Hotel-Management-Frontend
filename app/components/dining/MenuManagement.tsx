@@ -198,7 +198,7 @@ export default function MenuManagement({ onAddNewItem }: MenuManagementProps) {
 
     return (
         <div className="space-y-6">
-            {/* Header - Removed the Add New Item button */}
+            {/* Header */}
             <div>
                 <h1 className="text-2xl font-bold text-gray-900">Menu Management</h1>
                 <p className="text-gray-600">Manage your restaurant menu items</p>
