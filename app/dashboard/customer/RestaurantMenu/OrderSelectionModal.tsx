@@ -25,6 +25,8 @@ interface OrderSelectionModalProps {
 export interface SelectedMenuItem {
     menuItem: MenuItem;
     quantity: number;
+    specialInstructions?: string; // Add this
+    dietaryRestrictions?: string[]; // Add this
 }
 
 export default function OrderSelectionModal({
@@ -174,7 +176,7 @@ export default function OrderSelectionModal({
                                                 {item.available ? "Available" : "Unavailable"}
                                             </span>
 
-                                                                                        {isSelected && (
+                                            {isSelected && (
                                                 <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
                                                     <button
                                                         onClick={() => updateQuantity(item.id, (selectedItem?.quantity || 1) - 1)}
