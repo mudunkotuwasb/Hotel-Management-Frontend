@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Plus, CheckCircle, Users, Utensils, LucideIcon } from "lucide-react";
+import NewBookingModal from "../../components/bookings/NewBookingModal";
 
 interface Action {
   label: string;
@@ -15,13 +16,23 @@ interface QuickActionsProps {
 }
 
 export default function QuickActions({ actions }: QuickActionsProps) {
+  const [isNewBookingOpen, setIsNewBookingOpen] = useState(false);
+
+  const handleNewBookingClick = () => {
+    setIsNewBookingOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsNewBookingOpen(false);
+  };
+
   // Default actions if parent doesn't pass any
   const defaultActions: Action[] = [
     {
       label: "New Booking",
       icon: Plus,
       variant: "primary",
-      onClick: () => console.log("New"),
+      onClick: handleNewBookingClick,
     },
     {
       label: "Check-In",
@@ -83,6 +94,14 @@ export default function QuickActions({ actions }: QuickActionsProps) {
           );
         })}
       </div>
+
+      {/* Modal integration */}
+      <NewBookingModal
+        isOpen={isNewBookingOpen}
+        onClose={handleCloseModal}
+        editingBooking={null}
+        onUpdateBooking={() => setIsNewBookingOpen(false)}
+      />
     </div>
   );
 }
