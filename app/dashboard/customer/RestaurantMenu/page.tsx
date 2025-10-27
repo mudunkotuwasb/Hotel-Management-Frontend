@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import CustomerLayout from "../../../components/layout/CustomerLayout";
 import OrderSelectionModal from "./OrderSelectionModal";
 import OrderConfirmationModal from "./OrderConfirmationModal";
+import CustomOrderModal from "./CustomOrderModal"; // Add this import
 import { SelectedMenuItem } from "./OrderSelectionModal";
 
 // Define the menu item interface based on NewMenuItemPopup()
@@ -26,6 +27,7 @@ export default function RestaurantMenuPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [isCustomOrderModalOpen, setIsCustomOrderModalOpen] = useState(false); // Add this state
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [selectedOrderItems, setSelectedOrderItems] = useState<SelectedMenuItem[]>([]);
 
@@ -110,6 +112,36 @@ export default function RestaurantMenuPage() {
     setIsConfirmationModalOpen(true);
   };
 
+  // Handle custom order submission
+  const handleCustomOrder = (customOrderDetails: {
+    description: string;
+    specialInstructions: string;
+    estimatedPrice?: number;
+    dietaryRestrictions: string[];
+  }) => {
+    // Create a custom menu item for the order
+    const customMenuItem: MenuItem = {
+      id: `custom-${Date.now()}`,
+      name: "Custom Order",
+      category: "Custom",
+      description: customOrderDetails.description,
+      ingredients: ["Custom Ingredients"],
+      price: customOrderDetails.estimatedPrice || 0,
+      available: true
+    };
+
+    const selectedItem: SelectedMenuItem = {
+      menuItem: customMenuItem,
+      quantity: 1,
+      specialInstructions: customOrderDetails.specialInstructions,
+      dietaryRestrictions: customOrderDetails.dietaryRestrictions
+    };
+
+    setSelectedOrderItems([selectedItem]);
+    setIsCustomOrderModalOpen(false);
+    setIsConfirmationModalOpen(true);
+  };
+
   if (loading) {
     return (
       <CustomerLayout>
@@ -143,12 +175,22 @@ export default function RestaurantMenuPage() {
             <h1 className="text-2xl font-bold text-gray-900 mb-1">Restaurant Menu</h1>
             <p className="text-base text-gray-600">Explore our delicious dining options</p>
           </div>
-          <button 
-            onClick={() => setIsOrderModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-          >
-            + Order
-          </button>
+          <div className="flex gap-3">
+            {/* Custom Order Button */}
+            <button 
+              onClick={() => setIsCustomOrderModalOpen(true)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Custom Order
+            </button>
+            {/* Regular Order Button */}
+            <button 
+              onClick={() => setIsOrderModalOpen(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              + Order
+            </button>
+          </div>
         </div>
 
         {/* Category Filter */}
@@ -265,6 +307,13 @@ export default function RestaurantMenuPage() {
           onClose={() => setIsOrderModalOpen(false)}
           menuItems={menuItems}
           onProceedToOrder={handleProceedToOrder}
+        />
+
+        {/* Custom Order Modal */}
+        <CustomOrderModal
+          isOpen={isCustomOrderModalOpen}
+          onClose={() => setIsCustomOrderModalOpen(false)}
+          onSubmit={handleCustomOrder}
         />
 
         {/* Order Confirmation Modal */}
