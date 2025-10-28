@@ -77,12 +77,56 @@ const mockRooms: Room[] = [
     maxOccupancy: 4,
     floor: 2,
   },
-  // add more rooms if needed
+];
+
+const mockCheckIns = [
+  {
+    id: "C001",
+    roomNumber: "102",
+    guestName: "John Doe",
+    checkInDate: "2025-10-28",
+    nights: 2,
+    contact: "0712345678",
+  },
+  {
+    id: "C002",
+    roomNumber: "104",
+    guestName: "Amal Perera",
+    checkInDate: "2025-10-28",
+    nights: 1,
+    contact: "0756789123",
+  },
+];
+
+const mockCheckOuts = [
+  {
+    id: "O001",
+    roomNumber: "101",
+    guestName: "Jane Smith",
+    checkOutDate: "2025-10-28",
+    total: 3500,
+  },
+];
+
+const mockOrders = [
+  {
+    id: "M001",
+    guestName: "Kavindu Silva",
+    roomNumber: "103",
+    items: ["Breakfast Set", "Coffee"],
+    total: 1200,
+    status: "Delivered",
+  },
 ];
 
 export default function Dashboard() {
   const stats = mockDashboardStats;
   const [filteredRooms, setFilteredRooms] = useState<Room[] | null>(null);
+  const [filteredCheckIns, setFilteredCheckIns] = useState<any[] | null>(null);
+  const [filteredCheckOuts, setFilteredCheckOuts] = useState<any[] | null>(
+    null
+  );
+  const [filteredOrders, setFilteredOrders] = useState<any[] | null>(null);
 
   // Mock chart data
   const occupancyData = [
@@ -176,6 +220,12 @@ export default function Dashboard() {
             icon={Users}
             bgColor="bg-yellow-500"
             textColor="text-white"
+            onClick={() => {
+              setFilteredRooms(null);
+              setFilteredCheckOuts(null);
+              setFilteredOrders(null);
+              setFilteredCheckIns((prev) => (prev ? null : mockCheckIns));
+            }}
           />
           <StatsCard
             title="Today's Check-outs"
@@ -184,6 +234,12 @@ export default function Dashboard() {
             icon={Users}
             bgColor="bg-red-500"
             textColor="text-white"
+            onClick={() => {
+              setFilteredRooms(null);
+              setFilteredCheckIns(null);
+              setFilteredOrders(null);
+              setFilteredCheckOuts((prev) => (prev ? null : mockCheckOuts));
+            }}
           />
           <StatsCard
             title="Today's Orders"
@@ -194,6 +250,12 @@ export default function Dashboard() {
             icon={Utensils}
             bgColor="bg-teal-500"
             textColor="text-white"
+            onClick={() => {
+              setFilteredRooms(null);
+              setFilteredCheckIns(null);
+              setFilteredCheckOuts(null);
+              setFilteredOrders((prev) => (prev ? null : mockOrders));
+            }}
           />
         </div>
 
@@ -217,6 +279,186 @@ export default function Dashboard() {
                   onStatusChange={handleStatusChange}
                 />
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* ✅ Today's Check-ins Table */}
+        {filteredCheckIns && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Today's Check-ins</h2>
+              <button
+                className="text-sm text-gray-600 hover:underline"
+                onClick={() => setFilteredCheckIns(null)}
+              >
+                Clear Filter
+              </button>
+            </div>
+
+            <div className="overflow-x-auto bg-white rounded-lg shadow">
+              <table className="min-w-full divide-y divide-gray-200 text-sm">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Booking ID
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Guest Name
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Room No
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Check-in Date
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Nights
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Contact
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 text-gray-700">
+                  {filteredCheckIns.map((checkin) => (
+                    <tr
+                      key={checkin.id}
+                      className="hover:bg-gray-50 transition"
+                    >
+                      <td className="px-6 py-3">{checkin.id}</td>
+                      <td className="px-6 py-3 font-medium">
+                        {checkin.guestName}
+                      </td>
+                      <td className="px-6 py-3">{checkin.roomNumber}</td>
+                      <td className="px-6 py-3">{checkin.checkInDate}</td>
+                      <td className="px-6 py-3">{checkin.nights}</td>
+                      <td className="px-6 py-3">{checkin.contact}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* 🚪 Today's Check-outs Table */}
+        {filteredCheckOuts && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Today's Check-outs</h2>
+              <button
+                className="text-sm text-gray-600 hover:underline"
+                onClick={() => setFilteredCheckOuts(null)}
+              >
+                Clear Filter
+              </button>
+            </div>
+
+            <div className="overflow-x-auto bg-white rounded-lg shadow">
+              <table className="min-w-full divide-y divide-gray-200 text-sm">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Checkout ID
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Guest Name
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Room No
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Check-out Date
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Total Amount
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 text-gray-700">
+                  {filteredCheckOuts.map((checkout) => (
+                    <tr
+                      key={checkout.id}
+                      className="hover:bg-gray-50 transition"
+                    >
+                      <td className="px-6 py-3">{checkout.id}</td>
+                      <td className="px-6 py-3 font-medium">
+                        {checkout.guestName}
+                      </td>
+                      <td className="px-6 py-3">{checkout.roomNumber}</td>
+                      <td className="px-6 py-3">{checkout.checkOutDate}</td>
+                      <td className="px-6 py-3">
+                        Rs.{checkout.total.toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* 🍽️ Today's Orders Table */}
+        {filteredOrders && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Today's Orders</h2>
+              <button
+                className="text-sm text-gray-600 hover:underline"
+                onClick={() => setFilteredOrders(null)}
+              >
+                Clear Filter
+              </button>
+            </div>
+
+            <div className="overflow-x-auto bg-white rounded-lg shadow">
+              <table className="min-w-full divide-y divide-gray-200 text-sm">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Order ID
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Guest Name
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Room No
+                    </th>
+                    <th className="px-6 py-3 text-left font-semibold">Items</th>
+                    <th className="px-6 py-3 text-left font-semibold">Total</th>
+                    <th className="px-6 py-3 text-left font-semibold">
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 text-gray-700">
+                  {filteredOrders.map((order) => (
+                    <tr key={order.id} className="hover:bg-gray-50 transition">
+                      <td className="px-6 py-3">{order.id}</td>
+                      <td className="px-6 py-3 font-medium">
+                        {order.guestName}
+                      </td>
+                      <td className="px-6 py-3">{order.roomNumber}</td>
+                      <td className="px-6 py-3">{order.items.join(", ")}</td>
+                      <td className="px-6 py-3">
+                        Rs.{order.total.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-3">
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-medium ${
+                            order.status === "Delivered"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-yellow-100 text-yellow-700"
+                          }`}
+                        >
+                          {order.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
