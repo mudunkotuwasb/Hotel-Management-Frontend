@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { BookingData } from "../bookings/NewBookingModal";
+import { BookingData } from "./NewBookingModal";
 
 interface ConfirmProps {
   data: BookingData;
@@ -60,7 +60,12 @@ export default function Confirm({ data, prevStep, onComplete }: ConfirmProps) {
       data.bookingDetails.checkOut,
     ];
 
-    if (requiredFields.some(field => !field || field === "Not selected" || field === "Select an Option")) {
+    if (
+      requiredFields.some(
+        (field) =>
+          !field || field === "Not selected" || field === "Select an Option"
+      )
+    ) {
       return "Please fill in all required fields before confirming.";
     }
 
@@ -113,11 +118,10 @@ export default function Confirm({ data, prevStep, onComplete }: ConfirmProps) {
       */
 
       // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Show success state
       setIsConfirmed(true);
-
     } catch (err) {
       console.error("Error confirming booking:", err);
       setError("Failed to confirm booking. Please try again.");
@@ -139,17 +143,21 @@ export default function Confirm({ data, prevStep, onComplete }: ConfirmProps) {
     try {
       const date = new Date(dateString);
       const day = date.getDate();
-      const month = date.toLocaleDateString('en-US', { month: 'short' });
+      const month = date.toLocaleDateString("en-US", { month: "short" });
       const year = date.getFullYear();
 
       // Add ordinal suffix to day
       const getOrdinalSuffix = (day: number) => {
-        if (day > 3 && day < 21) return 'th';
+        if (day > 3 && day < 21) return "th";
         switch (day % 10) {
-          case 1: return "st";
-          case 2: return "nd";
-          case 3: return "rd";
-          default: return "th";
+          case 1:
+            return "st";
+          case 2:
+            return "nd";
+          case 3:
+            return "rd";
+          default:
+            return "th";
         }
       };
 
@@ -161,13 +169,16 @@ export default function Confirm({ data, prevStep, onComplete }: ConfirmProps) {
 
   // Calculate duration in nights
   const calculateDuration = () => {
-    if (!data.bookingDetails.checkIn || !data.bookingDetails.checkOut) return "0 nights";
+    if (!data.bookingDetails.checkIn || !data.bookingDetails.checkOut)
+      return "0 nights";
 
     try {
       const checkIn = new Date(data.bookingDetails.checkIn);
       const checkOut = new Date(data.bookingDetails.checkOut);
-      const duration = Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-      return `${duration} night${duration !== 1 ? 's' : ''}`;
+      const duration = Math.ceil(
+        (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      return `${duration} night${duration !== 1 ? "s" : ""}`;
     } catch {
       return "0 nights";
     }
@@ -181,8 +192,9 @@ export default function Confirm({ data, prevStep, onComplete }: ConfirmProps) {
     if (adults === 0 && children === 0) return "No guests";
 
     const parts = [];
-    if (adults > 0) parts.push(`${adults} Adult${adults !== 1 ? 's' : ''}`);
-    if (children > 0) parts.push(`${children} Child${children !== 1 ? 'ren' : ''}`);
+    if (adults > 0) parts.push(`${adults} Adult${adults !== 1 ? "s" : ""}`);
+    if (children > 0)
+      parts.push(`${children} Child${children !== 1 ? "ren" : ""}`);
 
     return parts.join(", ");
   };
@@ -193,20 +205,32 @@ export default function Confirm({ data, prevStep, onComplete }: ConfirmProps) {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 text-center">
         {/* Success Icon */}
         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          <svg
+            className="w-8 h-8 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
+            />
           </svg>
         </div>
-        
+
         {/* Success Title */}
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Booking Confirmed!</h2>
-        
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Booking Confirmed!
+        </h2>
+
         {/* Success Message */}
         <div className="text-gray-600 mb-8 space-y-2">
           <p>Your booking has been successfully confirmed.</p>
           <p>Thank you for choosing Grand Hotel.</p>
         </div>
-        
+
         {/* Got it Button */}
         <button
           onClick={handleGotIt}
@@ -221,7 +245,6 @@ export default function Confirm({ data, prevStep, onComplete }: ConfirmProps) {
   // Original Confirmation Form
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-600 text-sm">{error}</p>
@@ -234,39 +257,83 @@ export default function Confirm({ data, prevStep, onComplete }: ConfirmProps) {
 
         {/* Guest Information */}
         <div className="mb-6">
-          <h4 className="text-base font-bold text-gray-800 mb-3">Guest Information</h4>
+          <h4 className="text-base font-bold text-gray-800 mb-3">
+            Guest Information
+          </h4>
           <div className="space-y-2 text-sm text-gray-700">
-            <p><span className="font-medium">Name:</span> {data.guestInfo.firstName || "Not provided"} {data.guestInfo.lastName || ""}</p>
-            <p><span className="font-medium">Email:</span> {data.guestInfo.email || "Not provided"}</p>
-            <p><span className="font-medium">Phone:</span> {data.guestInfo.phone || "Not provided"}</p>
+            <p>
+              <span className="font-medium">Name:</span>{" "}
+              {data.guestInfo.firstName || "Not provided"}{" "}
+              {data.guestInfo.lastName || ""}
+            </p>
+            <p>
+              <span className="font-medium">Email:</span>{" "}
+              {data.guestInfo.email || "Not provided"}
+            </p>
+            <p>
+              <span className="font-medium">Phone:</span>{" "}
+              {data.guestInfo.phone || "Not provided"}
+            </p>
           </div>
         </div>
 
         {/* Booking Details */}
         <div className="mb-6">
-          <h4 className="text-base font-bold text-gray-800 mb-3">Booking Details</h4>
+          <h4 className="text-base font-bold text-gray-800 mb-3">
+            Booking Details
+          </h4>
           <div className="space-y-2 text-sm text-gray-700">
-            <p><span className="font-medium">Check-in:</span> {formatDate(data.bookingDetails.checkIn)}</p>
-            <p><span className="font-medium">Check-out:</span> {formatDate(data.bookingDetails.checkOut)}</p>
-            <p><span className="font-medium">Duration:</span> {calculateDuration()}</p>
-            <p><span className="font-medium">Guests:</span> {formatGuestCount()}</p>
-            <p><span className="font-medium">Room Type:</span> {data.bookingDetails.roomType || "Not selected"}</p>
-            <p><span className="font-medium">Number of Rooms:</span> {data.bookingDetails.rooms || 1}</p>
+            <p>
+              <span className="font-medium">Check-in:</span>{" "}
+              {formatDate(data.bookingDetails.checkIn)}
+            </p>
+            <p>
+              <span className="font-medium">Check-out:</span>{" "}
+              {formatDate(data.bookingDetails.checkOut)}
+            </p>
+            <p>
+              <span className="font-medium">Duration:</span>{" "}
+              {calculateDuration()}
+            </p>
+            <p>
+              <span className="font-medium">Guests:</span> {formatGuestCount()}
+            </p>
+            <p>
+              <span className="font-medium">Room Type:</span>{" "}
+              {data.bookingDetails.roomType || "Not selected"}
+            </p>
+            <p>
+              <span className="font-medium">Number of Rooms:</span>{" "}
+              {data.bookingDetails.rooms || 1}
+            </p>
           </div>
         </div>
 
         {/* Preferences */}
         <div className="mb-6">
-          <h4 className="text-base font-bold text-gray-800 mb-3">Preferences</h4>
+          <h4 className="text-base font-bold text-gray-800 mb-3">
+            Preferences
+          </h4>
           <div className="space-y-2 text-sm text-gray-700">
-            <p><span className="font-medium">Bed Preference:</span> {data.preferences.bedType ?
-              data.preferences.bedType.charAt(0).toUpperCase() + data.preferences.bedType.slice(1)
-              : "Not selected"}</p>
-            <p><span className="font-medium">Meal Plan:</span> {data.preferences.mealPlan && data.preferences.mealPlan !== "Select an Option"
-              ? data.preferences.mealPlan
-              : "Not selected"}</p>
+            <p>
+              <span className="font-medium">Bed Preference:</span>{" "}
+              {data.preferences.bedType
+                ? data.preferences.bedType.charAt(0).toUpperCase() +
+                  data.preferences.bedType.slice(1)
+                : "Not selected"}
+            </p>
+            <p>
+              <span className="font-medium">Meal Plan:</span>{" "}
+              {data.preferences.mealPlan &&
+              data.preferences.mealPlan !== "Select an Option"
+                ? data.preferences.mealPlan
+                : "Not selected"}
+            </p>
             {data.preferences.specialRequests && (
-              <p><span className="font-medium">Special Request:</span> {data.preferences.specialRequests}</p>
+              <p>
+                <span className="font-medium">Special Request:</span>{" "}
+                {data.preferences.specialRequests}
+              </p>
             )}
           </div>
         </div>

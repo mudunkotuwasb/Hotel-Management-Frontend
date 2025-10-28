@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import CustomerLayout from "../../../components/layout/CustomerLayout";
-import NewBookingModal from "../bookings/NewBookingModal";
+import NewBookingModal from "../NewBooking/NewBookingModal";
 
 // Define the room interface to match your Rooms() component
 interface Room {
@@ -82,7 +82,6 @@ export default function ExploreRoomsPage() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
-
   useEffect(() => {
     const fetchRooms = async () => {
       try {
@@ -97,7 +96,7 @@ export default function ExploreRoomsPage() {
           setLoading(false);
         }, 1000);
       } catch (error) {
-        console.error('Error fetching rooms:', error);
+        console.error("Error fetching rooms:", error);
         setRooms(sampleRooms);
         setLoading(false);
       }
@@ -107,8 +106,9 @@ export default function ExploreRoomsPage() {
   }, []);
 
   // Filter rooms based on user preferences
-  const filteredRooms = rooms.filter(room => {
-    const matchesType = filters.roomType === "all" || room.type === filters.roomType;
+  const filteredRooms = rooms.filter((room) => {
+    const matchesType =
+      filters.roomType === "all" || room.type === filters.roomType;
     const matchesPrice = room.rate <= filters.maxPrice;
     const matchesOccupancy = room.maxOccupancy >= filters.minOccupancy;
     const isAvailable = room.status === "available";
@@ -124,12 +124,18 @@ export default function ExploreRoomsPage() {
   // Get display status
   const getDisplayStatus = (status: Room["status"]) => {
     switch (status) {
-      case "available": return "Available";
-      case "occupied": return "Occupied";
-      case "reserved": return "Reserved";
-      case "cleaning": return "Cleaning";
-      case "maintenance": return "Maintenance";
-      default: return "Unknown";
+      case "available":
+        return "Available";
+      case "occupied":
+        return "Occupied";
+      case "reserved":
+        return "Reserved";
+      case "cleaning":
+        return "Cleaning";
+      case "maintenance":
+        return "Maintenance";
+      default:
+        return "Unknown";
     }
   };
 
@@ -148,8 +154,12 @@ export default function ExploreRoomsPage() {
       <CustomerLayout>
         <div className="p-4 sm:p-6">
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Explore Our Rooms</h1>
-            <p className="text-base text-gray-600">Discover our luxurious accommodations</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Explore Our Rooms
+            </h1>
+            <p className="text-base text-gray-600">
+              Discover our luxurious accommodations
+            </p>
           </div>
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -164,13 +174,19 @@ export default function ExploreRoomsPage() {
       <div className="p-4 sm:p-6">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Explore Our Rooms</h1>
-          <p className="text-base text-gray-600">Discover our luxurious accommodations</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Explore Our Rooms
+          </h1>
+          <p className="text-base text-gray-600">
+            Discover our luxurious accommodations
+          </p>
         </div>
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Filter Rooms</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Filter Rooms
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Room Type Filter */}
             <div>
@@ -179,7 +195,9 @@ export default function ExploreRoomsPage() {
               </label>
               <select
                 value={filters.roomType}
-                onChange={(e) => setFilters({ ...filters, roomType: e.target.value })}
+                onChange={(e) =>
+                  setFilters({ ...filters, roomType: e.target.value })
+                }
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="all">All Types</option>
@@ -201,7 +219,9 @@ export default function ExploreRoomsPage() {
                 max="500"
                 step="10"
                 value={filters.maxPrice}
-                onChange={(e) => setFilters({ ...filters, maxPrice: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFilters({ ...filters, maxPrice: parseInt(e.target.value) })
+                }
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -217,7 +237,12 @@ export default function ExploreRoomsPage() {
               </label>
               <select
                 value={filters.minOccupancy}
-                onChange={(e) => setFilters({ ...filters, minOccupancy: parseInt(e.target.value) })}
+                onChange={(e) =>
+                  setFilters({
+                    ...filters,
+                    minOccupancy: parseInt(e.target.value),
+                  })
+                }
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value={1}>1 Guest</option>
@@ -232,11 +257,15 @@ export default function ExploreRoomsPage() {
         {/* Results Info */}
         <div className="flex justify-between items-center mb-4">
           <p className="text-sm text-gray-600">
-            Showing {filteredRooms.length} of {rooms.filter(room => room.status === "available").length} available rooms
+            Showing {filteredRooms.length} of{" "}
+            {rooms.filter((room) => room.status === "available").length}{" "}
+            available rooms
           </p>
           <div className="text-sm text-gray-500">
-            {filters.roomType !== "all" && `Type: ${formatRoomType(filters.roomType)} • `}
-            Max: ${filters.maxPrice} • Min: {filters.minOccupancy} guest{filters.minOccupancy > 1 ? 's' : ''}
+            {filters.roomType !== "all" &&
+              `Type: ${formatRoomType(filters.roomType)} • `}
+            Max: ${filters.maxPrice} • Min: {filters.minOccupancy} guest
+            {filters.minOccupancy > 1 ? "s" : ""}
           </div>
         </div>
 
@@ -250,8 +279,12 @@ export default function ExploreRoomsPage() {
               {/* Room Image Placeholder */}
               <div className="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-800">Room {room.number}</div>
-                  <div className="text-sm text-blue-600 mt-1">Floor {room.floor}</div>
+                  <div className="text-2xl font-bold text-blue-800">
+                    Room {room.number}
+                  </div>
+                  <div className="text-sm text-blue-600 mt-1">
+                    Floor {room.floor}
+                  </div>
                 </div>
               </div>
 
@@ -263,10 +296,13 @@ export default function ExploreRoomsPage() {
                     <h3 className="text-lg font-semibold text-gray-900">
                       Room {room.number}
                     </h3>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${room.status === "available"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                      }`}>
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        room.status === "available"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
                       {getDisplayStatus(room.status)}
                     </span>
                   </div>
@@ -276,7 +312,8 @@ export default function ExploreRoomsPage() {
                     </span>
                     <span className="text-xs text-gray-400">•</span>
                     <span className="text-sm text-gray-600">
-                      Max {room.maxOccupancy} guest{room.maxOccupancy > 1 ? 's' : ''}
+                      Max {room.maxOccupancy} guest
+                      {room.maxOccupancy > 1 ? "s" : ""}
                     </span>
                   </div>
                 </div>
@@ -285,7 +322,9 @@ export default function ExploreRoomsPage() {
                 <div className="mb-3">
                   <div className="text-xl font-bold text-gray-900">
                     ${room.rate}
-                    <span className="text-sm font-normal text-gray-600">/night</span>
+                    <span className="text-sm font-normal text-gray-600">
+                      /night
+                    </span>
                   </div>
                 </div>
 
@@ -311,10 +350,11 @@ export default function ExploreRoomsPage() {
                 {/* Book Now Button */}
                 <button
                   onClick={() => handleBookNow(room)}
-                  className={`w-full py-2 px-3 rounded-md font-medium text-sm transition-colors ${room.status === "available"
-                    ? "bg-blue-600 hover:bg-blue-700 text-white"
-                    : "bg-gray-100 text-gray-500 cursor-not-allowed"
-                    }`}
+                  className={`w-full py-2 px-3 rounded-md font-medium text-sm transition-colors ${
+                    room.status === "available"
+                      ? "bg-blue-600 hover:bg-blue-700 text-white"
+                      : "bg-gray-100 text-gray-500 cursor-not-allowed"
+                  }`}
                   disabled={room.status !== "available"}
                 >
                   {room.status === "available" ? "Book Now" : "Not Available"}
@@ -328,16 +368,30 @@ export default function ExploreRoomsPage() {
         {filteredRooms.length === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              <svg
+                className="mx-auto h-16 w-16"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No rooms found</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No rooms found
+            </h3>
             <p className="text-gray-600 mb-4">
               Try adjusting your filters to see more available rooms.
             </p>
             <button
-              onClick={() => setFilters({ roomType: "all", maxPrice: 500, minOccupancy: 1 })}
+              onClick={() =>
+                setFilters({ roomType: "all", maxPrice: 500, minOccupancy: 1 })
+              }
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
               Clear all filters

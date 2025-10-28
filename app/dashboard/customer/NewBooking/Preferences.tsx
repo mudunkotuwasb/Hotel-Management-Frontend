@@ -1,7 +1,7 @@
 // app/dashboard/customer/NewBooking/Preferences.tsx
 "use client";
 
-import { BookingData } from "../bookings/NewBookingModal";
+import { BookingData } from "./NewBookingModal";
 
 interface PreferencesProps {
   data: BookingData;
@@ -12,7 +12,12 @@ interface PreferencesProps {
   totalSteps: number;
 }
 
-export default function Preferences({ data, updateData, nextStep, prevStep }: PreferencesProps) {
+export default function Preferences({
+  data,
+  updateData,
+  nextStep,
+  prevStep,
+}: PreferencesProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     nextStep();
@@ -22,7 +27,7 @@ export default function Preferences({ data, updateData, nextStep, prevStep }: Pr
     { value: "single", label: "Single" },
     { value: "double", label: "Double" },
     { value: "king", label: "King" },
-    { value: "twin", label: "Twin" }
+    { value: "twin", label: "Twin" },
   ];
 
   const mealPlans = [
@@ -30,7 +35,7 @@ export default function Preferences({ data, updateData, nextStep, prevStep }: Pr
     "Bed & Breakfast",
     "Half Board",
     "Full Board",
-    "All Inclusive"
+    "All Inclusive",
   ];
 
   return (
@@ -43,17 +48,24 @@ export default function Preferences({ data, updateData, nextStep, prevStep }: Pr
           </label>
           <div className="space-y-2 sm:space-y-3">
             {bedTypes.map((bed) => (
-              <label key={bed.value} className="flex items-center space-x-3 cursor-pointer py-1">
+              <label
+                key={bed.value}
+                className="flex items-center space-x-3 cursor-pointer py-1"
+              >
                 <input
                   type="radio"
                   name="bedType"
                   value={bed.value}
                   checked={data.preferences.bedType === bed.value}
-                  onChange={(e) => updateData('preferences', { bedType: e.target.value })}
+                  onChange={(e) =>
+                    updateData("preferences", { bedType: e.target.value })
+                  }
                   className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 border-gray-300 focus:ring-blue-500"
                   required
                 />
-                <span className="text-sm sm:text-base text-gray-700">{bed.label}</span>
+                <span className="text-sm sm:text-base text-gray-700">
+                  {bed.label}
+                </span>
               </label>
             ))}
           </div>
@@ -66,11 +78,15 @@ export default function Preferences({ data, updateData, nextStep, prevStep }: Pr
           </label>
           <select
             value={data.preferences.mealPlan || "Select an Option"}
-            onChange={(e) => updateData('preferences', { mealPlan: e.target.value })}
+            onChange={(e) =>
+              updateData("preferences", { mealPlan: e.target.value })
+            }
             className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all text-black"
           >
             {mealPlans.map((plan) => (
-              <option key={plan} value={plan}>{plan}</option>
+              <option key={plan} value={plan}>
+                {plan}
+              </option>
             ))}
           </select>
         </div>
@@ -81,8 +97,10 @@ export default function Preferences({ data, updateData, nextStep, prevStep }: Pr
             Special Requests
           </label>
           <textarea
-            value={data.preferences.specialRequests || ''}
-            onChange={(e) => updateData('preferences', { specialRequests: e.target.value })}
+            value={data.preferences.specialRequests || ""}
+            onChange={(e) =>
+              updateData("preferences", { specialRequests: e.target.value })
+            }
             rows={4}
             className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all resize-none text-black"
             placeholder="Any special requests or requirements..."

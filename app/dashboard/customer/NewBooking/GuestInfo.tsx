@@ -1,7 +1,7 @@
 // app/dashboard/customer/NewBooking/GuestInfo.tsx
 "use client";
 
-import { BookingData } from "../bookings/NewBookingModal";
+import { BookingData } from "./NewBookingModal";
 
 interface GuestInfoProps {
   data: BookingData;
@@ -12,16 +12,20 @@ interface GuestInfoProps {
   totalSteps: number;
 }
 
-export default function GuestInfo({ data, updateData, nextStep }: GuestInfoProps) {
+export default function GuestInfo({
+  data,
+  updateData,
+  nextStep,
+}: GuestInfoProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     nextStep();
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const digitsOnly = e.target.value.replace(/\D/g, '');
+    const digitsOnly = e.target.value.replace(/\D/g, "");
     const limitedDigits = digitsOnly.slice(0, 9);
-    updateData('guestInfo', { phone: limitedDigits });
+    updateData("guestInfo", { phone: limitedDigits });
   };
 
   return (
@@ -37,12 +41,14 @@ export default function GuestInfo({ data, updateData, nextStep }: GuestInfoProps
               type="text"
               required
               value={data.guestInfo.firstName}
-              onChange={(e) => updateData('guestInfo', { firstName: e.target.value })}
+              onChange={(e) =>
+                updateData("guestInfo", { firstName: e.target.value })
+              }
               className="w-full px-4 py-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
               placeholder="First name"
             />
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Last Name *
@@ -51,7 +57,9 @@ export default function GuestInfo({ data, updateData, nextStep }: GuestInfoProps
               type="text"
               required
               value={data.guestInfo.lastName}
-              onChange={(e) => updateData('guestInfo', { lastName: e.target.value })}
+              onChange={(e) =>
+                updateData("guestInfo", { lastName: e.target.value })
+              }
               className="w-full px-4 py-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
               placeholder="Last name"
             />
@@ -67,12 +75,12 @@ export default function GuestInfo({ data, updateData, nextStep }: GuestInfoProps
             type="email"
             required
             value={data.guestInfo.email}
-            onChange={(e) => updateData('guestInfo', { email: e.target.value })}
+            onChange={(e) => updateData("guestInfo", { email: e.target.value })}
             className="w-full px-4 py-3 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-black"
             placeholder="email@example.com"
           />
         </div>
-        
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Phone Number *

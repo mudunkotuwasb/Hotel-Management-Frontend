@@ -1,7 +1,7 @@
 // app/dashboard/customer/NewBooking/BookingDetails.tsx
 "use client";
 
-import { BookingData } from "../bookings/NewBookingModal";
+import { BookingData } from "./NewBookingModal";
 
 interface BookingDetailsProps {
   data: BookingData;
@@ -12,7 +12,12 @@ interface BookingDetailsProps {
   totalSteps: number;
 }
 
-export default function BookingDetails({ data, updateData, nextStep, prevStep }: BookingDetailsProps) {
+export default function BookingDetails({
+  data,
+  updateData,
+  nextStep,
+  prevStep,
+}: BookingDetailsProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     nextStep();
@@ -23,7 +28,7 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
     "Deluxe Room",
     "Executive Suite",
     "Presidential Suite",
-    "Family Room"
+    "Family Room",
   ];
 
   return (
@@ -38,7 +43,9 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
               type="date"
               required
               value={data.bookingDetails.checkIn}
-              onChange={(e) => updateData('bookingDetails', { checkIn: e.target.value })}
+              onChange={(e) =>
+                updateData("bookingDetails", { checkIn: e.target.value })
+              }
               className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all text-black"
             />
           </div>
@@ -51,7 +58,9 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
               type="date"
               required
               value={data.bookingDetails.checkOut}
-              onChange={(e) => updateData('bookingDetails', { checkOut: e.target.value })}
+              onChange={(e) =>
+                updateData("bookingDetails", { checkOut: e.target.value })
+              }
               className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all text-black"
             />
           </div>
@@ -65,9 +74,11 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
             <div className="flex items-center space-x-3 sm:space-x-4">
               <button
                 type="button"
-                onClick={() => updateData('bookingDetails', {
-                  adults: Math.max(0, (data.bookingDetails.adults || 0) - 1)
-                })}
+                onClick={() =>
+                  updateData("bookingDetails", {
+                    adults: Math.max(0, (data.bookingDetails.adults || 0) - 1),
+                  })
+                }
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors text-sm sm:text-base"
               >
                 -
@@ -77,9 +88,11 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
               </span>
               <button
                 type="button"
-                onClick={() => updateData('bookingDetails', {
-                  adults: (data.bookingDetails.adults || 0) + 1
-                })}
+                onClick={() =>
+                  updateData("bookingDetails", {
+                    adults: (data.bookingDetails.adults || 0) + 1,
+                  })
+                }
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors text-sm sm:text-base"
               >
                 +
@@ -94,9 +107,14 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
             <div className="flex items-center space-x-3 sm:space-x-4">
               <button
                 type="button"
-                onClick={() => updateData('bookingDetails', {
-                  children: Math.max(0, (data.bookingDetails.children || 0) - 1)
-                })}
+                onClick={() =>
+                  updateData("bookingDetails", {
+                    children: Math.max(
+                      0,
+                      (data.bookingDetails.children || 0) - 1
+                    ),
+                  })
+                }
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors text-sm sm:text-base"
               >
                 -
@@ -106,9 +124,11 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
               </span>
               <button
                 type="button"
-                onClick={() => updateData('bookingDetails', {
-                  children: (data.bookingDetails.children || 0) + 1
-                })}
+                onClick={() =>
+                  updateData("bookingDetails", {
+                    children: (data.bookingDetails.children || 0) + 1,
+                  })
+                }
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors text-sm sm:text-base"
               >
                 +
@@ -124,12 +144,16 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
           <select
             required
             value={data.bookingDetails.roomType}
-            onChange={(e) => updateData('bookingDetails', { roomType: e.target.value })}
+            onChange={(e) =>
+              updateData("bookingDetails", { roomType: e.target.value })
+            }
             className="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all text-black"
           >
             <option value="">Select a room type</option>
-            {roomTypes.map(type => (
-              <option key={type} value={type}>{type}</option>
+            {roomTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
             ))}
           </select>
         </div>
@@ -141,9 +165,11 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
           <div className="flex items-center space-x-3 sm:space-x-4">
             <button
               type="button"
-              onClick={() => updateData('bookingDetails', {
-                rooms: Math.max(0, (data.bookingDetails.rooms || 0) - 1)
-              })}
+              onClick={() =>
+                updateData("bookingDetails", {
+                  rooms: Math.max(0, (data.bookingDetails.rooms || 0) - 1),
+                })
+              }
               className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors text-sm sm:text-base"
             >
               -
@@ -153,9 +179,11 @@ export default function BookingDetails({ data, updateData, nextStep, prevStep }:
             </span>
             <button
               type="button"
-              onClick={() => updateData('bookingDetails', {
-                rooms: (data.bookingDetails.rooms || 0) + 1
-              })}
+              onClick={() =>
+                updateData("bookingDetails", {
+                  rooms: (data.bookingDetails.rooms || 0) + 1,
+                })
+              }
               className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors text-sm sm:text-base"
             >
               +

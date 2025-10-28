@@ -2,10 +2,10 @@
 "use client";
 
 import { useState } from "react";
-import GuestInfo from "../NewBooking/GuestInfo";
-import BookingDetails from "../NewBooking/BookingDetails";
-import Preferences from "../NewBooking/Preferences";
-import Confirm from "../NewBooking/Confirm";
+import GuestInfo from "./GuestInfo";
+import BookingDetails from "./BookingDetails";
+import Preferences from "./Preferences";
+import Confirm from "./Confirm";
 
 export type BookingData = {
   guestInfo: {
@@ -34,7 +34,10 @@ interface NewBookingModalProps {
   onComplete: () => void;
 }
 
-export default function NewBookingModal({ onClose, onComplete }: NewBookingModalProps) {
+export default function NewBookingModal({
+  onClose,
+  onComplete,
+}: NewBookingModalProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [bookingData, setBookingData] = useState<BookingData>({
     guestInfo: {
@@ -62,9 +65,9 @@ export default function NewBookingModal({ onClose, onComplete }: NewBookingModal
   const prevStep = () => setCurrentStep(currentStep - 1);
 
   const updateBookingData = (section: keyof BookingData, data: any) => {
-    setBookingData(prev => ({
+    setBookingData((prev) => ({
       ...prev,
-      [section]: { ...prev[section], ...data }
+      [section]: { ...prev[section], ...data },
     }));
   };
 
@@ -88,14 +91,26 @@ export default function NewBookingModal({ onClose, onComplete }: NewBookingModal
         <div className="flex justify-between items-center p-4 border-b">
           <div>
             <h2 className="text-xl font-semibold text-gray-900">New Booking</h2>
-            <p className="text-sm text-gray-600">Step {currentStep} of {steps.length}</p>
+            <p className="text-sm text-gray-600">
+              Step {currentStep} of {steps.length}
+            </p>
           </div>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 p-1"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -104,29 +119,42 @@ export default function NewBookingModal({ onClose, onComplete }: NewBookingModal
         <div className="px-4 py-3 bg-gray-50 border-b">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => (
-              <div key={step.number} className="flex flex-col items-center flex-1">
+              <div
+                key={step.number}
+                className="flex flex-col items-center flex-1"
+              >
                 <div className="flex items-center w-full">
                   {/* Step number and title container */}
                   <div className="flex flex-col items-center flex-1">
-                    <div className={`flex items-center justify-center w-6 h-6 rounded-full text-xs ${
-                      currentStep >= step.number 
-                        ? "bg-blue-600 text-white" 
-                        : "bg-gray-300 text-gray-600"
-                    }`}>
+                    <div
+                      className={`flex items-center justify-center w-6 h-6 rounded-full text-xs ${
+                        currentStep >= step.number
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-300 text-gray-600"
+                      }`}
+                    >
                       {step.number}
                     </div>
-                    <span className={`mt-1 text-xs font-medium text-center ${
-                      currentStep >= step.number ? "text-blue-600" : "text-gray-500"
-                    }`}>
+                    <span
+                      className={`mt-1 text-xs font-medium text-center ${
+                        currentStep >= step.number
+                          ? "text-blue-600"
+                          : "text-gray-500"
+                      }`}
+                    >
                       {step.title}
                     </span>
                   </div>
-                  
+
                   {/* Connector line (except for last step) */}
                   {index < steps.length - 1 && (
-                    <div className={`flex-1 h-0.5 mx-2 ${
-                      currentStep > step.number ? "bg-blue-600" : "bg-gray-300"
-                    }`} />
+                    <div
+                      className={`flex-1 h-0.5 mx-2 ${
+                        currentStep > step.number
+                          ? "bg-blue-600"
+                          : "bg-gray-300"
+                      }`}
+                    />
                   )}
                 </div>
               </div>
