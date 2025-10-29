@@ -137,7 +137,7 @@ export default function CustomTripModal({
             // Show error popup
             setShowErrorPopup(true);
         } finally {
-            setLoading(false);0
+            setLoading(false);
         }
     };
 
