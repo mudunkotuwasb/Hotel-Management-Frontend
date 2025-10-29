@@ -1,10 +1,9 @@
-// app/dashboard/customer/trip-packages/page.tsx
-
 "use client";
 
 import { useState, useEffect } from "react";
 import CustomerLayout from "../../../components/layout/CustomerLayout";
 import BookingModal from "./BookingModal";
+import CustomTripModal from "./CustomTripModal";
 
 interface Package {
     id: number;
@@ -23,6 +22,7 @@ export default function CustomerTripPackages() {
     const [packages, setPackages] = useState<Package[]>([]);
     const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    const [isCustomTripModalOpen, setIsCustomTripModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -90,6 +90,13 @@ export default function CustomerTripPackages() {
         setIsBookingModalOpen(true);
     };
 
+    const handleCustomTripCreated = (tripData: any) => {
+        console.log("Custom trip created:", tripData);
+        // You can add additional logic here, like showing a success message
+        // or redirecting to a confirmation page
+        alert("Your custom trip request has been submitted! Our travel experts will contact you soon.");
+    };
+
     if (loading) {
         return (
             <CustomerLayout>
@@ -101,12 +108,36 @@ export default function CustomerTripPackages() {
     return (
         <CustomerLayout>
             <div className="space-y-6">
-                {/* Header */}
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Trip Packages</h1>
-                    <p className="text-gray-600 mt-2">
-                        Discover amazing destinations and experience
-                    </p>
+                {/* Header Section */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">Trip Packages</h1>
+                        <p className="text-gray-600 mt-2">
+                            Discover amazing destinations and experiences
+                        </p>
+                    </div>
+                    
+                    {/* Custom Trip Button */}
+                    <button
+                        onClick={() => setIsCustomTripModalOpen(true)}
+                        className="flex items-center space-x-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors font-medium shadow-md"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 4.5v15m7.5-7.5h-15"
+                            />
+                        </svg>
+                        <span>Custom Trip</span>
+                    </button>
                 </div>
 
                 {/* Packages Grid */}
@@ -255,6 +286,13 @@ export default function CustomerTripPackages() {
                         }}
                     />
                 )}
+
+                {/* Custom Trip Modal */}
+                <CustomTripModal
+                    isOpen={isCustomTripModalOpen}
+                    onClose={() => setIsCustomTripModalOpen(false)}
+                    onTripCreated={handleCustomTripCreated}
+                />
             </div>
         </CustomerLayout>
     );
