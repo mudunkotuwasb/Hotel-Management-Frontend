@@ -39,7 +39,7 @@ export default function Header({
 
   const wrapperClasses =
     dashboardType === "customer"
-      ? "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-3"
+      ? "px-6 py-3 flex justify-between items-center"
       : "px-6 py-3 flex justify-between items-center";
 
   return (

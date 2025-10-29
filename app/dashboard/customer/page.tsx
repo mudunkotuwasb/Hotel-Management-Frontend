@@ -135,7 +135,7 @@ export default function CustomerDashboard() {
 
   return (
     <CustomerLayout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="space-y-6">
           {/* Welcome Section */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl p-6 text-white">

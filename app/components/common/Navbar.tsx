@@ -56,7 +56,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const currentTab = tabs.find(tab => pathname === tab.href);
+    const currentTab = tabs.find((tab) => pathname === tab.href);
     if (currentTab) {
       setActiveTab(currentTab.id);
     }
@@ -69,8 +69,8 @@ export default function Navbar() {
 
   return (
     <div className="bg-white border-b border-gray-200 overflow-x-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="flex space-x-4 whitespace-nowrap">
+      <div className="px-6 py-3 flex justify-between items-center">
+        <nav className="flex space-x-9 whitespace-nowrap">
           {tabs.map((tab) => (
             <button
               key={tab.id}
